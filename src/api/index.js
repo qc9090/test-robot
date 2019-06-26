@@ -37,7 +37,7 @@ export default ({ config, db }) => {
 	})
 
 	api.post('/crowdlog', async (req, res) => {
-		console.log('crowd log', res.body)
+		console.log('crowd log', req.body)
 		res.json({ test: 'test' })
 	})
 

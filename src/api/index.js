@@ -1,3 +1,4 @@
+import multipart from 'connect-multiparty';
 import { version } from '../../package.json';
 import { Router } from 'express';
 import facets from './facets';
@@ -5,6 +6,7 @@ import * as robotApi from './robot'
 
 export default ({ config, db }) => {
 	let api = Router();
+	const multipartMiddleware = multipart();
 
 	// mount the facets resource
 	api.use('/facets', facets({ config, db }));
@@ -36,7 +38,7 @@ export default ({ config, db }) => {
 		})
 	})
 
-	api.post('/crowdlog', async (req, res) => {
+	api.post('/crowdlog', multipartMiddleware, async (req, res) => {
 		console.log('crowd log', req.body)
 		res.json({ test: 'test' })
 	})

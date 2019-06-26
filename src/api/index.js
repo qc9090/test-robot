@@ -36,8 +36,10 @@ export default ({ config, db }) => {
 		})
 	})
 
-	api.post('/crowdlog', (req, res) => {
+	api.post('/crowdlog', async (req, res) => {
 		console.log('crowd log')
+		const userinfo = await robotApi.getInfo(req.session.apikey)
+		console.log(userinfo)
 		res.json({ test: 'test' })
 	})
 

@@ -29,9 +29,9 @@ export default ({ config, db }) => {
 	});
 
 	api.post('/qrcode', multipartMiddleware, async (req, res) => {
-		console.log(req.body, req.session.apikey)
-		const rs = await robotApi.setUrl(req.session.apikey)
-		console.log(rs)
+		console.log(req.body)
+		// const rs = await robotApi.setUrl(req.session.apikey)
+		// console.log(rs)
 		res.json({
 			result: true,
 			data: {}

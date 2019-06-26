@@ -28,8 +28,8 @@ export default ({ config, db }) => {
 		res.json({ version });
 	});
 
-	api.post('/qrcode', async (req, res) => {
-		console.log('request', req.session.apikey)
+	api.post('/qrcode', multipartMiddleware, async (req, res) => {
+		console.log(req.body, req.session.apikey)
 		const rs = await robotApi.setUrl(req.session.apikey)
 		console.log(rs)
 		res.json({
@@ -43,20 +43,20 @@ export default ({ config, db }) => {
 		res.json({ test: 'test' })
 	})
 
-	api.post('/messagelog', () => {
-		console.log('message log')
+	api.post('/messagelog', multipartMiddleware, (req) => {
+		console.log('message log', req.body)
 	})
 
-	api.post('/addfriendlog', () => {
-		console.log('add friendship')
+	api.post('/addfriendlog', multipartMiddleware, (req) => {
+		console.log('add friendship', req.body)
 	})
 
-	api.post('/wacatout', () => {
-		console.log('bot status')
+	api.post('/wacatout', multipartMiddleware, (req) => {
+		console.log('bot status', req.body)
 	})
 
-	api.post('/addgrouplog', () => {
-		console.log('add group')
+	api.post('/addgrouplog', multipartMiddleware, (req) => {
+		console.log('add group', req.body)
 	})
 
 	return api;

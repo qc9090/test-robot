@@ -4,7 +4,7 @@ const random = require('string-random')
 
 const apiLogin = 'http://api.aiheisha.com/foreign/auth/login.html'
 const apiGetInfo = 'http://api.aiheisha.com/foreign/user/getInfo.html'
-const apiScan = 'http://api.aiheisha.com/foreign/message/scan.html'
+const apiScan = 'http://api.aiheisha.com/foreign/message/scanNew.html'
 const apiSetUrl = 'http://api.aiheisha.com/foreign/user/setUrl.html'
 
 const TOKEN = '13b36d7778b6fdbd4dbfca8af909a6ce38342c3375b7b5e9c2e2bc11c57c4784'

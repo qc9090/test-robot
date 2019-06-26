@@ -4,7 +4,7 @@ import { login, getWechatQrcode } from '../api/robot'
   try {
     const res = await login('16601149089', '123456')
     if (res.code === 1) {
-      const rs = await getWechatQrcode('http://127.0.0.1:8080/api/qrcode', res.data.apikey)
+      const rs = await getWechatQrcode(res.data.apikey)
       console.log(rs, 'qrcode')
     }
   } catch (e) {

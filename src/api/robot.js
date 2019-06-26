@@ -8,11 +8,12 @@ const apiScan = 'http://api.aiheisha.com/foreign/message/scan.html'
 const apiSetUrl = 'http://api.aiheisha.com/foreign/user/setUrl.html'
 
 const TOKEN = '13b36d7778b6fdbd4dbfca8af909a6ce38342c3375b7b5e9c2e2bc11c57c4784'
-const MESSAGE_LOG = 'http://127.0.0.1:8080/api/messagelog'
-const CROWD_LOG = 'http://127.0.0.1:8080/api/crowdlog'
-const ADD_FRIEND_LOG = 'http://127.0.0.1:8080/api/addfriendlog'
-const WACAT_OUT = 'http://127.0.0.1:8080/api/wacatout'
-const ADD_GROUP_LOG = 'http://127.0.0.1:8080/api/addgrouplog'
+const QRCODE_URL = 'http://140.143.223.100:8091/api/qrcode'
+const MESSAGE_LOG = 'http://140.143.223.100:8091/api/messagelog'
+const CROWD_LOG = 'http://140.143.223.100:8091/api/crowdlog'
+const ADD_FRIEND_LOG = 'http://140.143.223.100:8091/api/addfriendlog'
+const WACAT_OUT = 'http://140.143.223.100:8091/api/wacatout'
+const ADD_GROUP_LOG = 'http://140.143.223.100:8091/api/addgrouplog'
 
 const hswebtime = parseInt(Date.now() / 1000) + '_' + random(32)
 const hash = crypto.createHash('md5')
@@ -50,7 +51,7 @@ export function getInfo (apikey) {
   })
 }
 
-export function getWechatQrcode (callbackUrl, apikey) {
+export function getWechatQrcode (apikey) {
   return rp({
     method: 'POST',
     url: apiScan,
@@ -58,7 +59,7 @@ export function getWechatQrcode (callbackUrl, apikey) {
       apikey
     },
     formData: {
-      callback_url: callbackUrl
+      callback_url: QRCODE_URL
     },
     json: true
   })

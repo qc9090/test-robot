@@ -54,10 +54,12 @@ export default ({ config, db }) => {
 		console.log('crowd log', req.body)
 		const { data } = req.body
 		const msg = JSON.parse(data)
+		const roomid = msg.g_number
+		const id = msg.to_account
+    const roomkey = `${roomid}${id}`
 
-		let reason
+		let reason = ''
 		let curSession = session[curStep] || {}
-		console.log(msg.content, essay[curStep], 'mykey-------')
 
 		// 问答广告
 		if (msg.content === essay[curStep]['q'].trim()) {
@@ -124,19 +126,6 @@ export default ({ config, db }) => {
 						chatAnalytics[userKey] = userData1
 
 						console.log(userData1, 'ask reward---')
-
-						// 计算群主奖励
-						const ownerkey = `${roomid}${ownerid}`
-						const ownerName = room.owner().name()
-						let ownerData = chatAnalytics[ownerkey]
-						if (ownerData) {
-							ownerData.count++
-						} else {
-							ownerData = { count: 1, contactName: ownerName }
-						}
-
-						chatAnalytics[ownerkey] = ownerData
-						console.log(ownerData, 'owner reward---')
 
 						console.log(session, 'session --------')
 

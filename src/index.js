@@ -20,7 +20,8 @@ app.use(cookieParser());
 
 // session 
 app.use(session({
-  secret: 'keyboard cat',
+	secret: 'keyboard cat',
+	key: 'admin',
   resave: false,
   saveUninitialized: true
 }))

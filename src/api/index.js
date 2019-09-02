@@ -142,7 +142,9 @@ export default ({ config, db }) => {
 		}
 
 		if (msg.content === '查询挖矿奖励') {
-			const rs = await robotApi.sendUrl(req.session.apikey, myAccount, roomid)
+			const { apikey } = req.session
+			console.log(apikey, 'apikey------')
+			const rs = await robotApi.sendUrl(apikey, myAccount, roomid)
 			console.log(rs, '查询挖矿奖励')
 		}
 

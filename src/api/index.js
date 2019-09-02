@@ -3,7 +3,7 @@ import { version } from '../../package.json';
 import { Router } from 'express';
 import facets from './facets';
 import * as robotApi from './robot'
-import { essay } from './lib/essay'
+import { essay } from '../lib/essay'
 
 export default ({ config, db }) => {
 	let api = Router();

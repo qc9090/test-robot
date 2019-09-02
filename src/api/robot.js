@@ -8,12 +8,14 @@ const apiScan = 'http://api.aiheisha.com/foreign/message/scanNew.html'
 const apiSetUrl = 'http://api.aiheisha.com/foreign/user/setUrl.html'
 
 const TOKEN = '13b36d7778b6fdbd4dbfca8af909a6ce38342c3375b7b5e9c2e2bc11c57c4784'
-const QRCODE_URL = 'http://140.143.223.100:8091/api/qrcode'
-const MESSAGE_LOG = 'http://140.143.223.100:8091/api/messagelog'
-const CROWD_LOG = 'http://140.143.223.100:8091/api/crowdlog'
-const ADD_FRIEND_LOG = 'http://140.143.223.100:8091/api/addfriendlog'
-const WACAT_OUT = 'http://140.143.223.100:8091/api/wacatout'
-const ADD_GROUP_LOG = 'http://140.143.223.100:8091/api/addgrouplog'
+const baseUrl = `http://140.143.223.100:8091`
+
+const QRCODE_URL = `${baseUrl}/api/qrcode`
+const MESSAGE_LOG = `${baseUrl}/api/messagelog`
+const CROWD_LOG = `${baseUrl}/api/crowdlog`
+const ADD_FRIEND_LOG = `${baseUrl}/api/addfriendlog`
+const WACAT_OUT = `${baseUrl}/api/wacatout`
+const ADD_GROUP_LOG = `${baseUrl}/api/addgrouplog`
 
 const hswebtime = parseInt(Date.now() / 1000) + '_' + random(32)
 const hash = crypto.createHash('md5')

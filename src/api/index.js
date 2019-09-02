@@ -30,7 +30,7 @@ export default ({ config, db }) => {
 	});
 
 	api.post('/qrcode', multipartMiddleware, async (req, res) => {
-		console.log(req, 'qrcode req')
+		console.log(req.session, 'qrcode req')
 		const { data } = req.body
 		console.log(JSON.parse(data), 'got qrcode successfully')
 

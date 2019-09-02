@@ -28,7 +28,8 @@ app.use(session({
 
 // 3rd party middleware
 app.use(cors({
-	exposedHeaders: config.corsHeaders
+	exposedHeaders: config.corsHeaders,
+	credentials: true
 }));
 
 app.use(bodyParser.json({

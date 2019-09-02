@@ -17,6 +17,9 @@ const ADD_FRIEND_LOG = `${baseUrl}/api/addfriendlog`
 const WACAT_OUT = `${baseUrl}/api/wacatout`
 const ADD_GROUP_LOG = `${baseUrl}/api/addgrouplog`
 
+/* wechat handler api*/
+const apiSendUrl = 'http://api.aiheisha.com/foreign/message/sendUrl.html'
+
 const hswebtime = parseInt(Date.now() / 1000) + '_' + random(32)
 const hash = crypto.createHash('md5')
 hash.update(`${hswebtime}${TOKEN}`)
@@ -80,6 +83,26 @@ export function setUrl (apikey) {
       addfriendlog: ADD_FRIEND_LOG,
       wecatout: WACAT_OUT,
       addgrouplog: ADD_GROUP_LOG
+    },
+    json: true
+  })
+}
+
+export function sendUrl (apikey, myAccount, toAccount) {
+  return rp({
+    method: 'POST',
+    url: apiSendUrl,
+    headers: {
+      apikey
+    },
+    formData: {
+      my_account: myAccount,
+      to_account: toAccount,
+      url: 'http://192.168.1.56:8080/#/qa?roomid=23694344189%40chatroom',
+      title: '本群当前挖矿指数已累计100，排名第1！',
+      describe: '在群内回答问题即可获得挖矿指数',
+      type: 2,
+      thumb: 'https://static.chain.pro/chain/praad.gif'
     },
     json: true
   })

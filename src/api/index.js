@@ -50,10 +50,13 @@ export default ({ config, db }) => {
 		})
 	})
 
-	api.post('/crowdlog', multipartMiddleware, async (req, res) => {
+	api.post('/crowdlog', multipartMiddleware, async (req) => {
 		console.log('crowd log', req.body)
+		console.log(req.session, 'session-----')
 		const { data } = req.body
 		const msg = JSON.parse(data)
+
+		const myAccount = msg.my_account
 		const roomid = msg.g_number
 		const id = msg.to_account
 		const contactName = msg.to_name
@@ -67,6 +70,7 @@ export default ({ config, db }) => {
 			console.log(msg.content, 'question----')
 			if (!curSession.ask) {
 				curSession['ask'] = id
+				curSession['askName'] = contactName
 				session[curStep] = curSession
 			} else {
 				reason = '此问题已经被问过了'
@@ -77,7 +81,7 @@ export default ({ config, db }) => {
 
 		if (msg.content === essay[curStep]['a'].trim()) {
 			console.log(msg.content, 'answer-----')
-			const { ask, answer } = curSession
+			const { ask, askName, answer } = curSession
 			if (!answer) {
 				if (!ask) {
 					reason = '问题还没有抛出'
@@ -121,7 +125,7 @@ export default ({ config, db }) => {
 						if (userData1) {
 							userData1.count++
 						} else {
-							userData1 = { count: 1, contactName }
+							userData1 = { count: 1, contactName: askName }
 						}
 
 						chatAnalytics[userKey] = userData1
@@ -137,6 +141,11 @@ export default ({ config, db }) => {
 			}
 
 			console.log(reason, '---reason----')
+		}
+
+		if (msg.content === '查询挖矿奖励') {
+			const rs = await robotApi.sendUrl(req.session.apikey, myAccount, id)
+			console.log(rs, '查询挖矿奖励')
 		}
 	})
 

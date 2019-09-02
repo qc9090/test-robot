@@ -20,12 +20,13 @@ export default ({ config, db }) => {
 				req.session.apikey = apikey
 
 				const rss = await robotApi.getWechatQrcode(apikey)
-				console.log(JSON.parse(rss.data), 'qrcode')
+				console.log(rss, 'qrcode')
+
+				res.json({ version, rss });
 			}
 		} catch (e) {
 			console.log(e)
 		}
-		res.json({ version });
 	});
 
 	api.post('/qrcode', multipartMiddleware, async (req, res) => {

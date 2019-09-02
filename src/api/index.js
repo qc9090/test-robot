@@ -7,7 +7,7 @@ import { essay } from '../lib/essay'
 
 export default ({ config, db }) => {
 	let api = Router();
-
+	let apikey
 	let chatAnalytics = {}
 	let session = []
 	let curStep = 0
@@ -25,6 +25,7 @@ export default ({ config, db }) => {
 			if (rs.code === 1) {
 				const { apikey } = rs.data
 				req.session.apikey = apikey
+				apikey = apikey
 
 				const rss = await robotApi.getWechatQrcode(apikey)
 				console.log(rss, 'login')
@@ -142,10 +143,11 @@ export default ({ config, db }) => {
 		}
 
 		if (msg.content === '查询挖矿奖励') {
-			const { apikey } = req.session
-			console.log(apikey, 'apikey------')
-			const rs = await robotApi.sendUrl(apikey, myAccount, roomid)
-			console.log(rs, '查询挖矿奖励')
+			if (apikey) {
+				console.log(apikey, 'apikey------')
+				const rs = await robotApi.sendUrl(apikey, myAccount, roomid)
+				console.log(rs, '查询挖矿奖励')
+			}
 		}
 
 		res.json({})

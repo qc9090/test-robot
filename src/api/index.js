@@ -15,12 +15,17 @@ export default ({ config, db }) => {
 	api.get('/', async (req, res) => {
 		try {
 			const rs = await robotApi.login('16601149089', '123456')
+			console.log(rs, 'login rs---')
 			if (rs.code === 1) {
 				const { apikey } = rs.data
 				req.session.apikey = apikey
 
 				const rss = await robotApi.getWechatQrcode(apikey)
 				console.log(rss, 'login')
+
+				// set url
+				const rsSet = await robotApi.setUrl(apikey)
+				console.log(rsSet, 'set url---')
 
 				res.json({ version, rss });
 			}
@@ -34,9 +39,6 @@ export default ({ config, db }) => {
 		const { data } = req.body
 		console.log(JSON.parse(data), 'got qrcode successfully')
 
-		// set url
-		const rs = await robotApi.setUrl(req.session.apikey)
-		console.log(rs, 'set url---')
 		res.json({
 			result: true
 		})

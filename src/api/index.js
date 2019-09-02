@@ -56,6 +56,7 @@ export default ({ config, db }) => {
 		const msg = JSON.parse(data)
 		const roomid = msg.g_number
 		const id = msg.to_account
+		const contactName = msg.to_name
     const roomkey = `${roomid}${id}`
 
 		let reason = ''

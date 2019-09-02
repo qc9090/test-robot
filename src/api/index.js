@@ -51,6 +51,7 @@ export default ({ config, db }) => {
 	})
 
 	api.post('/crowdlog', multipartMiddleware, async (req) => {
+		req.session.userName = '123456'
 		console.log('crowd log', req.body)
 		console.log(req.session, 'session-----')
 		const { data } = req.body

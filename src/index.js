@@ -23,7 +23,8 @@ app.use(session({
 	secret: 'keyboard cat',
 	key: 'admin',
   resave: false,
-  saveUninitialized: true
+	saveUninitialized: true,
+	cookie: { secure: true }
 }))
 
 // 3rd party middleware

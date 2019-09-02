@@ -51,7 +51,7 @@ export default ({ config, db }) => {
 		})
 	})
 
-	api.post('/crowdlog', multipartMiddleware, async (req) => {
+	api.post('/crowdlog', multipartMiddleware, async (req, res) => {
 		console.log('crowd log', req.body)
 		console.log(req.session, 'session-----')
 		const { data } = req.body
@@ -148,14 +148,21 @@ export default ({ config, db }) => {
 			const rs = await robotApi.sendUrl(req.session.apikey, myAccount, id)
 			console.log(rs, '查询挖矿奖励')
 		}
+
+		res.json({})
 	})
 
-	api.post('/messagelog', multipartMiddleware, (req) => {
-		console.log('message log', req.body)
+	api.post('/messagelog', multipartMiddleware, (req, res) => {
+		console.log('message log', req.session, req.body)
+
+		req.session.apikey = '88888888'
+		res.json({})
 	})
 
-	api.post('/addfriendlog', multipartMiddleware, (req) => {
-		console.log('add friendship', req.body)
+	api.post('/addfriendlog', multipartMiddleware, (req, res) => {
+		console.log('add friendship', req.session, req.body)
+
+		res.json({})
 	})
 
 	api.post('/wacatout', multipartMiddleware, (req) => {

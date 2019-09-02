@@ -41,7 +41,8 @@ export default ({ config, db }) => {
 	});
 
 	api.post('/qrcode', multipartMiddleware, async (req, res) => {
-		console.log(req.session, 'qrcode req')
+		req.session.test = '123456'
+		req.session.user = 'hhhhhuuuu'
 		const { data } = req.body
 		console.log(JSON.parse(data), 'got qrcode successfully')
 
@@ -51,7 +52,6 @@ export default ({ config, db }) => {
 	})
 
 	api.post('/crowdlog', multipartMiddleware, async (req) => {
-		req.session.userName = '123456'
 		console.log('crowd log', req.body)
 		console.log(req.session, 'session-----')
 		const { data } = req.body

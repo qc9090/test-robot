@@ -3,9 +3,15 @@ import { version } from '../../package.json';
 import { Router } from 'express';
 import facets from './facets';
 import * as robotApi from './robot'
+import { essay } from './lib/essay'
 
 export default ({ config, db }) => {
 	let api = Router();
+
+	let chatAnalytics = {}
+	let session = []
+	let curStep = 0
+
 	const multipartMiddleware = multipart();
 
 	// mount the facets resource
@@ -46,7 +52,102 @@ export default ({ config, db }) => {
 
 	api.post('/crowdlog', multipartMiddleware, async (req, res) => {
 		console.log('crowd log', req.body)
-		res.json({ test: 'test' })
+		const { data } = req.body
+		const msg = JSON.parse(data)
+
+		let reason
+		let curSession = session[curStep] || {}
+		console.log(msg.content, essay[curStep], 'mykey-------')
+
+		// 问答广告
+		if (msg.content === essay[curStep]['q'].trim()) {
+			console.log(msg.content, 'question----')
+			if (!curSession.ask) {
+				curSession['ask'] = id
+				session[curStep] = curSession
+			} else {
+				reason = '此问题已经被问过了'
+			}
+
+			console.log(reason, '---reason----')
+		}
+
+		if (msg.content === essay[curStep]['a'].trim()) {
+			console.log(msg.content, 'answer-----')
+			const { ask, answer } = curSession
+			if (!answer) {
+				if (!ask) {
+					reason = '问题还没有抛出'
+				} else if (id === ask) {
+					reason = '您不能回答自己的问题'
+				} else {
+					const curTeam = `${ask}${id}`
+					let teams = []
+					// 判断组合是否出现过
+					session.forEach(v => {
+						if (v) {
+							const team = `${v.ask}${v.answer}`
+							teams.push(team)
+						}
+					})
+					if (teams.includes(curTeam)) {
+						reason = '您已经回答过别人的问题'
+					} else {
+						curSession['ask'] = ask
+						curSession['answer'] = id
+						curSession['isFinished'] = true
+
+						session[curStep] = curSession
+						curStep++
+
+						// 计算回答者得分
+						let userData = chatAnalytics[roomkey]
+						if (userData) {
+							userData.count++
+						} else {
+							userData = { count: 1, contactName }
+						}
+
+						chatAnalytics[roomkey] = userData
+
+						console.log(userData, 'answer reward---')
+
+						// 计算提问者得分
+						const userKey = `${roomid}${ask}`
+						let userData1 = chatAnalytics[userKey]
+						if (userData1) {
+							userData1.count++
+						} else {
+							userData1 = { count: 1, contactName }
+						}
+
+						chatAnalytics[userKey] = userData1
+
+						console.log(userData1, 'ask reward---')
+
+						// 计算群主奖励
+						const ownerkey = `${roomid}${ownerid}`
+						const ownerName = room.owner().name()
+						let ownerData = chatAnalytics[ownerkey]
+						if (ownerData) {
+							ownerData.count++
+						} else {
+							ownerData = { count: 1, contactName: ownerName }
+						}
+
+						chatAnalytics[ownerkey] = ownerData
+						console.log(ownerData, 'owner reward---')
+
+						console.log(session, 'session --------')
+
+					}
+				}
+			} else {
+				reason = '问题已被回答'
+			}
+
+			console.log(reason, '---reason----')
+		}
 	})
 
 	api.post('/messagelog', multipartMiddleware, (req) => {

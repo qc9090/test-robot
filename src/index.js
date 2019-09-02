@@ -29,7 +29,7 @@ client.on("error", function (err) {
 
 app.use(session({
   store: new RedisStore({
-    client: redis,
+    client,
     prefix: 'hgk'
   }),
   cookie: { maxAge: 1 * 60 * 60 * 1000 }, //默认1小时

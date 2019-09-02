@@ -23,13 +23,20 @@ app.use(cookieParser());
 let RedisStore = require('connect-redis')(session)
 let client = redis.createClient()
 
-app.use(
-  session({
-    store: new RedisStore({ client }),
-    secret: 'keyboard cat',
-    resave: false,
-  })
-)
+client.on("error", function (err) {
+	console.log("Error " + err);
+})
+
+app.use(session({
+  store: new RedisStore({
+    client: redis,
+    prefix: 'hgk'
+  }),
+  cookie: { maxAge: 1 * 60 * 60 * 1000 }, //默认1小时
+  secret: 'sessionprochain',
+  resave: true,
+  saveUninitialized: true
+}));
 
 // 3rd party middleware
 app.use(cors({

@@ -41,8 +41,6 @@ export default ({ config, db }) => {
 	});
 
 	api.post('/qrcode', multipartMiddleware, async (req, res) => {
-		req.session.test = '123456'
-		req.session.user = 'hhhhhuuuu'
 		const { data } = req.body
 		console.log(JSON.parse(data), 'got qrcode successfully')
 
@@ -52,8 +50,7 @@ export default ({ config, db }) => {
 	})
 
 	api.post('/crowdlog', multipartMiddleware, async (req, res) => {
-		console.log('crowd log', req.body)
-		console.log(req.session, 'session-----')
+		console.log('crowd log', req.session, req.body)
 		const { data } = req.body
 		const msg = JSON.parse(data)
 
@@ -145,7 +142,7 @@ export default ({ config, db }) => {
 		}
 
 		if (msg.content === '查询挖矿奖励') {
-			const rs = await robotApi.sendUrl(req.session.apikey, myAccount, id)
+			const rs = await robotApi.sendUrl(req.session.apikey, myAccount, roomid)
 			console.log(rs, '查询挖矿奖励')
 		}
 
@@ -155,7 +152,6 @@ export default ({ config, db }) => {
 	api.post('/messagelog', multipartMiddleware, (req, res) => {
 		console.log('message log', req.session, req.body)
 
-		req.session.apikey = '88888888'
 		res.json({})
 	})
 

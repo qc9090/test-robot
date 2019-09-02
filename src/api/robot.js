@@ -8,7 +8,7 @@ const apiScan = 'http://api.aiheisha.com/foreign/message/scanNew.html'
 const apiSetUrl = 'http://api.aiheisha.com/foreign/user/setUrl.html'
 
 const TOKEN = '13b36d7778b6fdbd4dbfca8af909a6ce38342c3375b7b5e9c2e2bc11c57c4784'
-const baseUrl = `http://140.143.223.100:8091`
+const baseUrl = 'http://140.143.223.100:8091'
 
 const QRCODE_URL = `${baseUrl}/api/qrcode`
 const MESSAGE_LOG = `${baseUrl}/api/messagelog`

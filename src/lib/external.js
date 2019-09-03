@@ -19,6 +19,7 @@ export async function getQuestion (roomid) {
 }
 
 export async function updateReward (roomid, wxid, roomName, nickName, index, hlevel, taskId, reason, type, qid) {
+  console.log(roomid, wxid, roomName, nickName, index, hlevel, taskId, reason, type, qid, '---prams-------')
   return rp({
     method: 'POST',
     url: apiUpdateReward,

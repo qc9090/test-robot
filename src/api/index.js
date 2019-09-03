@@ -133,7 +133,7 @@ export default ({ config, db }) => {
 						}
 
 						chatAnalytics[roomkey] = userData
-						const userRs = await external.updateReward(roomid, id, roomName, contactName, userData.count, 'newfeiyang', curEassy.task_id, reason, 0, curEassy,id)
+						const userRs = await external.updateReward(roomid, id, roomName, contactName, userData.count, 'newfeiyang', curEassy.task_id, reason, 1, curEassy,id)
 						console.log(userData, userRs, 'answer reward---')
 
 						// 计算提问者得分
@@ -146,7 +146,7 @@ export default ({ config, db }) => {
 						}
 
 						chatAnalytics[userKey] = userData1
-						const user1Rs = await external.updateReward(roomid, id, roomName, userData1.contactName, userData1.count, 'newfeiyang', curEassy.task_id, reason, 0, curEassy.id)
+						const user1Rs = await external.updateReward(roomid, id, roomName, userData1.contactName, userData1.count, 'newfeiyang', curEassy.task_id, reason, 1, curEassy.id)
 						console.log(userData1, user1Rs, 'ask reward---')
 
 						console.log(session, 'session --------')
@@ -165,7 +165,7 @@ export default ({ config, db }) => {
 							}
 
 							chatAnalytics[ownerkey] = ownerData
-							const ownerRs = await external.updateReward(roomid, id, roomName, '', ownerData.count, 'newfeiyang', curEassy.task_id, reason, 0, curEassy.id)
+							const ownerRs = await external.updateReward(roomid, id, roomName, '', ownerData.count, 'newfeiyang', curEassy.task_id, reason, 1, curEassy.id)
 							console.log(ownerData, ownerRs, 'owner reward---')
 						}
 

@@ -11,7 +11,6 @@ let thisapikey
 let chatAnalytics = {}
 let session = []
 let curStep = 0
-let curEssay
 
 export default ({ config, db }) => {
 	let api = Router();
@@ -74,11 +73,9 @@ export default ({ config, db }) => {
 		let reason = ''
 		let curSession = session[curStep] || {}
 
-		if (!curEssay) {
-			const { data } = await external.getQuestion(roomid)
-			curEssay = data
-			console.log(curEassy, 'cur essay---')
-		}
+		const { data } = await external.getQuestion(roomid)
+		let curEssay = data
+		console.log(curEassy, 'cur essay---')
 
 		// 问答广告
 		// if (msg.content === essay[curStep]['q'].trim()) {
@@ -221,5 +218,5 @@ export default ({ config, db }) => {
 process.on('exit', (code) => {
 	console.log(`退出码: ${code}`);
 	// 同步统计数据
-  local.updateTopicRecord(curEssay.task_id, { topicId: curEssay.task_id, chatAnalytics })
+  local.updateTopicRecord(3, { topicId: 3, chatAnalytics })
 });

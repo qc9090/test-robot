@@ -73,8 +73,8 @@ export default ({ config, db }) => {
 		let reason = ''
 		let curSession = session[curStep] || {}
 
-		const { data } = await external.getQuestion(roomid)
-		let curEssay = data
+		const { data: cdata } = await external.getQuestion(roomid)
+		let curEssay = cdata
 		console.log(curEassy, 'cur essay---')
 
 		// 问答广告

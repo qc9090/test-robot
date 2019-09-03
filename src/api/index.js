@@ -11,7 +11,7 @@ let thisapikey
 let chatAnalytics = {}
 let session = []
 let curStep = 0
-let curEassy
+let roomEassy = {}
 const curTaskId = 4
 
 export default ({ config, db }) => {
@@ -75,11 +75,12 @@ export default ({ config, db }) => {
 		let reason = ''
 		let curSession = session[curStep] || {}
 
-		if (!curEassy) {
+		if (!roomEassy[roomid]) {
 			const { data: cdata } = await external.getQuestion(roomid)
-			curEassy = cdata
-			console.log(curEassy, 'cur essay---')
+			roomEassy[roomid] = cdata
+			console.log(cdata, 'cur essay---')
 		}
+		let curEassy = roomEassy[roomid]
 
 		// 问答广告
 		// if (msg.content === essay[curStep]['q'].trim()) {
@@ -171,7 +172,7 @@ export default ({ config, db }) => {
 
 						// 更新问题
 						const newQs = await external.getQuestion(roomid)
-						curEassy = newQs.data
+						roomEassy[roomid] = newQs.data
 						console.log(newQs, 'update new question ---')
 
 					}

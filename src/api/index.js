@@ -11,6 +11,8 @@ let thisapikey
 let chatAnalytics = {}
 let session = []
 let curStep = 0
+let curEassy
+const curTaskId = 4
 
 export default ({ config, db }) => {
 	let api = Router();
@@ -38,7 +40,7 @@ export default ({ config, db }) => {
 				console.log(rsSet, 'set url---')
 
 				// 查找历史记录
-				const rst = await local.getTopicRecord(3)
+				const rst = await local.getTopicRecord(curTaskId)
 				chatAnalytics = rst['chatAnalytics'] || {}
 				console.log(chatAnalytics, 'chat------------')
 
@@ -73,9 +75,11 @@ export default ({ config, db }) => {
 		let reason = ''
 		let curSession = session[curStep] || {}
 
-		const { data: cdata } = await external.getQuestion(roomid)
-		let curEassy = cdata
-		console.log(curEassy, 'cur essay---')
+		if (!curEassy) {
+			const { data: cdata } = await external.getQuestion(roomid)
+			curEassy = cdata
+			console.log(curEassy, 'cur essay---')
+		}
 
 		// 问答广告
 		// if (msg.content === essay[curStep]['q'].trim()) {
@@ -119,11 +123,6 @@ export default ({ config, db }) => {
 
 						session[curStep] = curSession
 						curStep++
-
-						// 更新问题
-						const newQs = await external.getQuestion(roomid)
-						curEassy = newQs.data
-						console.log(newQs, 'update new question ---')
 
 						// 计算回答者得分
 						let userData = chatAnalytics[roomkey]
@@ -169,6 +168,11 @@ export default ({ config, db }) => {
 							const ownerRs = await external.updateReward(roomid, id, roomName, '', ownerData.count, 'newfeiyang', curEassy.task_id, reason, 0, curEassy.id)
 							console.log(ownerData, ownerRs, 'owner reward---')
 						}
+
+						// 更新问题
+						const newQs = await external.getQuestion(roomid)
+						curEassy = newQs.data
+						console.log(newQs, 'update new question ---')
 
 					}
 				}
@@ -218,5 +222,5 @@ export default ({ config, db }) => {
 process.on('exit', (code) => {
 	console.log(`退出码: ${code}`);
 	// 同步统计数据
-  local.updateTopicRecord(3, { topicId: 3, chatAnalytics })
+  local.updateTopicRecord(curTaskId, { topicId: curTaskId, chatAnalytics })
 });

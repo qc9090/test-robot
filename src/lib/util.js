@@ -18,3 +18,7 @@ export function toRes(res, status=200) {
 		res.status(status).json(thing);
 	};
 }
+
+export function getRandomNum (m, n) {
+  return Math.floor(Math.random() * (m - n) + n)
+}

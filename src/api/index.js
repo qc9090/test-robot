@@ -3,15 +3,19 @@ import { version } from '../../package.json';
 import { Router } from 'express';
 import facets from './facets';
 import * as robotApi from './robot'
-import { essay } from '../lib/essay'
+// import { essay } from '../lib/essay'
+import * as external from '../lib/external'
+import * as local from '../lib/localDb'
+
+let thisapikey
+let chatAnalytics = {}
+let session = []
+let curStep = 0
+let curEssay
 
 export default ({ config, db }) => {
 	let api = Router();
-	let thisapikey
-	let chatAnalytics = {}
-	let session = []
-	let curStep = 0
-
+	
 	const multipartMiddleware = multipart();
 
 	// mount the facets resource
@@ -33,6 +37,11 @@ export default ({ config, db }) => {
 				// set url
 				const rsSet = await robotApi.setUrl(apikey)
 				console.log(rsSet, 'set url---')
+
+				// 查找历史记录
+				const rst = await local.getTopicRecord(3)
+				chatAnalytics = rst['chatAnalytics'] || {}
+				console.log(chatAnalytics, 'chat------------')
 
 				res.json({ version, rss });
 			}
@@ -57,6 +66,7 @@ export default ({ config, db }) => {
 
 		const myAccount = msg.my_account
 		const roomid = msg.g_number
+		const roomName = msg.g_name
 		const id = msg.to_account
 		const contactName = msg.to_name
     const roomkey = `${roomid}${id}`
@@ -64,8 +74,15 @@ export default ({ config, db }) => {
 		let reason = ''
 		let curSession = session[curStep] || {}
 
+		if (!curEssay) {
+			const { data } = await external.getQuestion(roomid)
+			curEssay = data
+			console.log(curEassy, 'cur essay---')
+		}
+
 		// 问答广告
-		if (msg.content === essay[curStep]['q'].trim()) {
+		// if (msg.content === essay[curStep]['q'].trim()) {
+		if (msg.content === curEssay['question']) {
 			console.log(msg.content, 'question----')
 			if (!curSession.ask) {
 				curSession['ask'] = id
@@ -78,7 +95,7 @@ export default ({ config, db }) => {
 			console.log(reason, '---reason----')
 		}
 
-		if (msg.content === essay[curStep]['a'].trim()) {
+		if (msg.content === curEassy['answer']) {
 			console.log(msg.content, 'answer-----')
 			const { ask, askName, answer } = curSession
 			if (!answer) {
@@ -106,6 +123,11 @@ export default ({ config, db }) => {
 						session[curStep] = curSession
 						curStep++
 
+						// 更新问题
+						const newQs = await external.getQuestion(roomid)
+						curEassy = newQs.data
+						console.log(newQs, 'update new question ---')
+
 						// 计算回答者得分
 						let userData = chatAnalytics[roomkey]
 						if (userData) {
@@ -115,8 +137,8 @@ export default ({ config, db }) => {
 						}
 
 						chatAnalytics[roomkey] = userData
-
-						console.log(userData, 'answer reward---')
+						const userRs = await external.updateReward(roomid, id, roomName, contactName, userData.count, 'newfeiyang', curEassy.task_id, reason, 0, curEassy,id)
+						console.log(userData, userRs, 'answer reward---')
 
 						// 计算提问者得分
 						const userKey = `${roomid}${ask}`
@@ -128,10 +150,28 @@ export default ({ config, db }) => {
 						}
 
 						chatAnalytics[userKey] = userData1
-
-						console.log(userData1, 'ask reward---')
+						const user1Rs = await external.updateReward(roomid, id, roomName, userData1.contactName, userData1.count, 'newfeiyang', curEassy.task_id, reason, 0, curEassy.id)
+						console.log(userData1, user1Rs, 'ask reward---')
 
 						console.log(session, 'session --------')
+
+						// 计算群主奖励
+						const gs = await robotApi.getOwner(thisapikey, myAccount, roomid)
+						console.log(gs, '获取群主信息')
+						if (gs.msg) {
+							const { author } = gs.data
+							const ownerkey = `${roomid}${author}`
+							let ownerData = chatAnalytics[ownerkey]
+							if (ownerData) {
+								ownerData.count += 0.5
+							} else {
+								ownerData = { count: 0.5 }
+							}
+
+							chatAnalytics[ownerkey] = ownerData
+							const ownerRs = await external.updateReward(roomid, id, roomName, '', ownerData.count, 'newfeiyang', curEassy.task_id, reason, 0, curEassy.id)
+							console.log(ownerData, ownerRs, 'owner reward---')
+						}
 
 					}
 				}
@@ -145,7 +185,9 @@ export default ({ config, db }) => {
 		if (msg.content === '查询挖矿奖励') {
 			if (thisapikey) {
 				console.log(thisapikey, 'apikey------')
-				const rs = await robotApi.sendUrl(thisapikey, myAccount, roomid)
+				const { data: { report } } = await external.getMintHistory(roomid, curEassy.id)
+				const url = `https://prabox.net/wechat-task/#/qa?roomid=${roomid}`
+				const rs = await robotApi.sendUrl(thisapikey, myAccount, roomid, url, report.room_index, report.ranking)
 				console.log(rs, '查询挖矿奖励')
 			}
 		}
@@ -175,3 +217,9 @@ export default ({ config, db }) => {
 
 	return api;
 }
+
+process.on('exit', (code) => {
+	console.log(`退出码: ${code}`);
+	// 同步统计数据
+  local.updateTopicRecord(curEssay.task_id, { topicId: curEssay.task_id, chatAnalytics })
+});

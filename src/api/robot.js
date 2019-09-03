@@ -19,6 +19,7 @@ const ADD_GROUP_LOG = `${baseUrl}/api/addgrouplog`
 
 /* wechat handler api*/
 const apiSendUrl = 'http://api.aiheisha.com/foreign/message/sendUrl.html'
+const apiGetOwner = 'http://api.aiheisha.com/foreign/group/owner.html'
 
 const hswebtime = parseInt(Date.now() / 1000) + '_' + random(32)
 const hash = crypto.createHash('md5')
@@ -88,7 +89,8 @@ export function setUrl (apikey) {
   })
 }
 
-export function sendUrl (apikey, myAccount, toAccount) {
+// 发送卡片链接
+export function sendUrl (apikey, myAccount, toAccount, url, roomIndex, rank) {
   return rp({
     method: 'POST',
     url: apiSendUrl,
@@ -98,11 +100,27 @@ export function sendUrl (apikey, myAccount, toAccount) {
     formData: {
       my_account: myAccount,
       to_account: toAccount,
-      url: 'http://192.168.1.56:8080/#/qa?roomid=23694344189%40chatroom',
-      title: '本群当前挖矿指数已累计100，排名第1！',
+      url,
+      title: `本群当前挖矿指数已累计${roomIndex}，排名第${rank}！`,
       describe: '在群内回答问题即可获得挖矿指数',
       type: 2,
       thumb: 'https://static.chain.pro/chain/praad.gif'
+    },
+    json: true
+  })
+}
+
+// 获得微信群主
+export function getOwner (apikey, myAccount, gNumber) {
+  return rp({
+    method: 'POST',
+    url: apiGetOwner,
+    headers: {
+      apikey
+    },
+    formData: {
+      my_account: myAccount,
+      g_number: gNumber
     },
     json: true
   })

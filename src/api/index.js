@@ -74,12 +74,12 @@ export default ({ config, db }) => {
 		let curSession = session[curStep] || {}
 
 		const { data: cdata } = await external.getQuestion(roomid)
-		let curEssay = cdata
+		let curEassy = cdata
 		console.log(curEassy, 'cur essay---')
 
 		// 问答广告
 		// if (msg.content === essay[curStep]['q'].trim()) {
-		if (msg.content === curEssay['question']) {
+		if (msg.content === curEassy['question']) {
 			console.log(msg.content, 'question----')
 			if (!curSession.ask) {
 				curSession['ask'] = id

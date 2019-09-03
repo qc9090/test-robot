@@ -133,7 +133,7 @@ export default ({ config, db }) => {
 						}
 
 						chatAnalytics[roomkey] = userData
-						const userRs = await external.updateReward(roomid, id, roomName, contactName, userData.count, 'newfeiyang', curEassy.task_id, reason, 1, curEassy,id)
+						const userRs = await external.updateReward(roomid, id, roomName, contactName, userData.count, 'newfeiyang', curEassy.task_id, reason, 1, curEassy.id)
 						console.log(userData, userRs, 'answer reward---')
 
 						// 计算提问者得分

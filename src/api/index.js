@@ -184,13 +184,13 @@ export default ({ config, db }) => {
 			console.log(reason, '---reason----')
 		}
 
-		if (msg.content === '查询挖矿奖励') {
+		if (msg.content === '挖矿') {
 			if (thisapikey) {
 				console.log(thisapikey, 'apikey------')
 				const { data: { report } } = await external.getMintHistory(roomid, curEassy.id)
 				const url = `https://prabox.net/wechat-task/#/qa?roomid=${roomid}&taskid=4`
 				const rs = await robotApi.sendUrl(thisapikey, myAccount, roomid, url, report.room_index, report.ranking)
-				console.log(rs, '查询挖矿奖励')
+				console.log(rs, '挖矿')
 			}
 		}
 

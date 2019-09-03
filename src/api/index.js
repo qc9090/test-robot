@@ -184,7 +184,7 @@ export default ({ config, db }) => {
 			console.log(reason, '---reason----')
 		}
 
-		if (msg.content === '挖矿') {
+		if (msg.content.trim() === '挖矿') {
 			if (thisapikey) {
 				console.log(thisapikey, 'apikey------')
 				const { data: { report } } = await external.getMintHistory(roomid, curEassy.id)

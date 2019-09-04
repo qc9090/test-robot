@@ -75,7 +75,7 @@ export default async (req, res) => {
           count = newPoint
 
           // 更新point
-          Repeat.updateOne({ roomid, cid: curTeam }, { $set: { point: newPoinnt } }, { upsert: true }, (err) => {
+          Repeat.updateOne({ roomid, cid: curTeam }, { $set: { point: newPoint } }, { upsert: true }, (err) => {
             if (err) console.log(err)
           })
         }

@@ -169,7 +169,7 @@ export default ({ config, db }) => {
 							}
 
 							chatAnalytics[ownerkey] = ownerData
-							const ownerRs = await external.updateReward(roomid, author, roomName, '', ownerData.count, 'newfeiyang', curEassy.task_id, reason, 3, curEassy.id)
+							const ownerRs = await external.updateReward(roomid, author, roomName, '群主', ownerData.count, 'newfeiyang', curEassy.task_id, reason, 3, curEassy.id)
 							console.log(ownerData, ownerRs, 'owner reward---')
 						}
 

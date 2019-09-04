@@ -98,7 +98,7 @@ export default ({ config, db }) => {
 
 		}
 
-		if (msg.content === curEassy['answer'] && msg.content.includes(`@${curSession['ask']}`)) {
+		if (msg.content === curEassy['answer'] && msg.content.includes(`@${curSession['askName']}`)) {
 			console.log(msg.content, 'answer-----')
 			const { ask, askName, answer } = curSession
 			if (!answer) {

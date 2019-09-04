@@ -154,7 +154,7 @@ export default async (req, res) => {
           }
 
           // 更新组合
-          Team.updateOne({ roomid, compose: curTeam }, { $set: { ask: answerData.contactName, answer: ask } }, { upsert: true }, (err) => {
+          Team.updateOne({ roomid, compose: curTeam }, { $set: { ask: answerData.contactName, answer: contactName } }, { upsert: true }, (err) => {
             if (err) console.log(err)
           })
 

@@ -1,4 +1,5 @@
 import Reward from '../models/reward'
+import Repeat from '../models/repeat'
 import * as external from '../lib/external'
 import * as robotApi from '../api/robot'
 
@@ -56,6 +57,7 @@ export default async (req, res) => {
       } else {
         const curTeam = `${ask}${id}`
         let teams = []
+        let count = 1
         // 判断组合是否出现过
         session.forEach(v => {
           if (v) {
@@ -64,8 +66,21 @@ export default async (req, res) => {
           }
         })
         if (teams.includes(curTeam)) {
-          reason = '组合重复'
-        } else {
+          let { point } = await Repeat.findOne({ roomid, cid: curTeam }).exec()
+          if (!point) point = 1
+          console.log(point, 'cur point')
+          let newPoint = point / 2
+          if (newPoint <= 0.1) newPoint = 0.01
+
+          count = newPoint
+
+          // 更新point
+          Repeat.updateOne({ roomid, cid: curTeam }, { $set: { point: newPoinnt } }, { upsert: true }, (err) => {
+            if (err) console.log(err)
+          })
+        }
+        // 不重复的情况
+        {
           curSession['ask'] = ask
           curSession['answer'] = id
           curSession['isFinished'] = true
@@ -74,11 +89,12 @@ export default async (req, res) => {
           curStep++
 
           // 计算回答者得分
-          let userData = await Reward.findOne({ roomkey }).exec()
+          let { data: userData } = await Reward.findOne({ roomkey }).exec()
+          console.log(userData, '---mongodb userdata----')
           if (userData) {
-            userData.count++
+            userData.count += count
           } else {
-            userData = { count: 1, contactName }
+            userData = { count, contactName }
           }
 
           Reward.updateOne({ roomkey }, { $set: { data: userData } }, { upsert: true }, (err) => {
@@ -91,11 +107,11 @@ export default async (req, res) => {
 
           // 计算提问者得分
           const userKey = `${roomid}${ask}`
-          let userData1 = await Reward.findOne({ roomkey: userKey }).exec()
+          let { data: userData1 } = await Reward.findOne({ roomkey: userKey }).exec()
           if (userData1) {
-            userData1.count++
+            userData1.count += count
           } else {
-            userData1 = { count: 1, contactName: askName }
+            userData1 = { count, contactName: askName }
           }
 
           Reward.updateOne({ roomkey: userKey }, { $set: { data: userData1 } }, { upsert: true }, (err) => {
@@ -113,11 +129,11 @@ export default async (req, res) => {
           if (gs.msg) {
             const { author } = gs.data
             const ownerkey = `${roomid}${author}`
-            let ownerData = await Reward.findOne({ roomkey: ownerKey }).exec()
+            let { data: ownerData } = await Reward.findOne({ roomkey: ownerKey }).exec()
             if (ownerData) {
-              ownerData.count += 0.5
+              ownerData.count += 0.5 * count
             } else {
-              ownerData = { count: 0.5 }
+              ownerData = { count: 0.5 * count }
             }
 
             const ownerRs = await external.updateReward(roomid, author, roomName, '群主', ownerData.count, 'newfeiyang', curEassy.task_id, reason, 3, curEassy.id)

@@ -171,7 +171,7 @@ export default async (req, res) => {
     let thisapikey = global.thisapikey
     if (thisapikey) {
       console.log(thisapikey, 'apikey------')
-      const { data: { report } } = await external.getMintHistory(roomid, curEassy.id)
+      const { data: { report } } = await external.getMintHistory(roomid, curEassy.task_id)
       const url = `https://prabox.net/wechat-task/#/qa?roomid=${roomid}&taskid=4`
       const rs = await robotApi.sendUrl(thisapikey, myAccount, roomid, url, report.room_index, report.ranking)
       console.log(rs, '挖矿')

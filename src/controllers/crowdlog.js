@@ -138,13 +138,15 @@ export default async (req, res) => {
             const ownerName = '群主'
             let ownerRs = await Reward.findOne({ roomkey: ownerkey }).exec()
             let ownerData
+            let ownerCount = 0.5 * count
             if (ownerRs) {
               ownerData = ownerRs.data
-              ownerData.count += 0.5 * count
+              ownerData.count += ownerCount
             } else {
-              ownerData = { count: 0.5 * count, contactName: ownerName }
+              ownerData = { count: ownerCount, contactName: ownerName }
             }
 
+            reason = `成功 +${ownerCount}`
             const ors = await external.updateReward(roomid, author, roomName, ownerName, ownerData.count, 'newfeiyang', curEassy.task_id, reason, 3, curEassy.id)
             console.log(ownerData, ors, 'owner reward---')
 

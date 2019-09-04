@@ -73,10 +73,7 @@ export default async (req, res) => {
           session[curStep] = curSession
           curStep++
 
-          reason = ''
-
           // 计算回答者得分
-          // let userData = chatAnalytics[roomkey]
           let userData = await Reward.findOne({ roomkey }).exec()
           if (userData) {
             userData.count++
@@ -84,16 +81,16 @@ export default async (req, res) => {
             userData = { count: 1, contactName }
           }
 
-          // chatAnalytics[roomkey] = userData
           Reward.updateOne({ roomkey }, { $set: { data: userData } }, { upsert: true }, (err) => {
             if (err) console.log(err)
           })
           const userRs = await external.updateReward(roomid, id, roomName, contactName, userData.count, 'newfeiyang', curEassy.task_id, reason, 2, curEassy.id)
           console.log(userData, userRs, 'answer reward---')
 
+          reason = `成功+1`
+
           // 计算提问者得分
           const userKey = `${roomid}${ask}`
-          // let userData1 = chatAnalytics[userKey]
           let userData1 = await Reward.findOne({ roomkey: userKey }).exec()
           if (userData1) {
             userData1.count++
@@ -101,10 +98,10 @@ export default async (req, res) => {
             userData1 = { count: 1, contactName: askName }
           }
 
-          // chatAnalytics[userKey] = userData1
           Reward.updateOne({ roomkey: userKey }, { $set: { data: userData1 } }, { upsert: true }, (err) => {
             if (err) console.log(err)
           })
+
           const user1Rs = await external.updateReward(roomid, ask, roomName, userData1.contactName, userData1.count, 'newfeiyang', curEassy.task_id, reason, 1, curEassy.id)
           console.log(userData1, user1Rs, 'ask reward---')
 
@@ -116,7 +113,6 @@ export default async (req, res) => {
           if (gs.msg) {
             const { author } = gs.data
             const ownerkey = `${roomid}${author}`
-            // let ownerData = chatAnalytics[ownerkey]
             let ownerData = await Reward.findOne({ roomkey: ownerKey }).exec()
             if (ownerData) {
               ownerData.count += 0.5
@@ -124,7 +120,6 @@ export default async (req, res) => {
               ownerData = { count: 0.5 }
             }
 
-            // chatAnalytics[ownerkey] = ownerData
             const ownerRs = await external.updateReward(roomid, author, roomName, '群主', ownerData.count, 'newfeiyang', curEassy.task_id, reason, 3, curEassy.id)
             console.log(ownerData, ownerRs, 'owner reward---')
 
@@ -137,10 +132,6 @@ export default async (req, res) => {
           const newQs = await external.getQuestion(roomid)
           roomEassy[roomid] = newQs.data
           console.log(newQs, 'update new question ---')          
-
-          Reward.updateOne({ roomkey: userKey }, userData1, { upsert: true }, (err) => {
-            if (err) console.log(err)
-          })
 
         }
       }

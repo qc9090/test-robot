@@ -142,8 +142,8 @@ export default async (req, res) => {
               ownerData = { count: 0.5 * count }
             }
 
-            const ownerRs = await external.updateReward(roomid, author, roomName, '群主', ownerData.count, 'newfeiyang', curEassy.task_id, reason, 3, curEassy.id)
-            console.log(ownerData, ownerRs, 'owner reward---')
+            const ors = await external.updateReward(roomid, author, roomName, '群主', ownerData.count, 'newfeiyang', curEassy.task_id, reason, 3, curEassy.id)
+            console.log(ownerData, ors, 'owner reward---')
 
             Reward.updateOne({ roomkey: ownerkey }, { $set: { data: ownerData } }, { upsert: true }, (err) => {
               if (err) console.log(err)

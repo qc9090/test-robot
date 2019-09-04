@@ -154,7 +154,7 @@ export default async (req, res) => {
   }
 
   if (msg.content.trim() === '挖矿') {
-    let thisapikey = global.apikey
+    let thisapikey = global.thisapikey
     if (thisapikey) {
       console.log(thisapikey, 'apikey------')
       const { data: { report } } = await external.getMintHistory(roomid, curEassy.id)

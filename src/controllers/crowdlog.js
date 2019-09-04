@@ -154,6 +154,7 @@ export default async (req, res) => {
   }
 
   if (msg.content.trim() === '挖矿') {
+    console.log(global.thisapikey, 'key----')
     let thisapikey = global.thisapikey
     if (thisapikey) {
       console.log(thisapikey, 'apikey------')

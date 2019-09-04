@@ -66,8 +66,8 @@ export default async (req, res) => {
           }
         })
         if (teams.includes(curTeam)) {
-          let { point } = await Repeat.findOne({ roomid, cid: curTeam }).exec()
-          if (!point) point = 1
+          let prs = await Repeat.findOne({ roomid, cid: curTeam }).exec()
+          let point = !prs ? 1 : prs.point
           console.log(point, 'cur point')
           let newPoint = point / 2
           if (newPoint <= 0.1) newPoint = 0.01

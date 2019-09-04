@@ -1,5 +1,6 @@
 import Reward from '../models/reward'
 import Repeat from '../models/repeat'
+import Team from '../models/team'
 import * as external from '../lib/external'
 import * as robotApi from '../api/robot'
 
@@ -56,16 +57,17 @@ export default async (req, res) => {
         reason = '您不能回答自己的问题'
       } else {
         const curTeam = `${ask}${id}`
-        let teams = []
+        let trs = await Team.findOne({ roomid, compose: curTeam }).exec()
+        // let teams = []
         let count = 1
         // 判断组合是否出现过
-        session.forEach(v => {
-          if (v) {
-            const team = `${v.ask}${v.answer}`
-            teams.push(team)
-          }
-        })
-        if (teams.includes(curTeam)) {
+        // session.forEach(v => {
+        //   if (v) {
+        //     const team = `${v.ask}${v.answer}`
+        //     teams.push(team)
+        //   }
+        // })
+        if (trs) {
           let prs = await Repeat.findOne({ roomid, cid: curTeam }).exec()
           let point = !prs ? 1 : prs.point
           console.log(point, 'cur point')
@@ -133,16 +135,17 @@ export default async (req, res) => {
           if (gs.msg) {
             const { author } = gs.data
             const ownerkey = `${roomid}${author}`
+            const ownerName = '群主'
             let ownerRs = await Reward.findOne({ roomkey: ownerkey }).exec()
             let ownerData
             if (ownerRs) {
               ownerData = ownerRs.data
               ownerData.count += 0.5 * count
             } else {
-              ownerData = { count: 0.5 * count }
+              ownerData = { count: 0.5 * count, contactName: ownerName }
             }
 
-            const ors = await external.updateReward(roomid, author, roomName, '群主', ownerData.count, 'newfeiyang', curEassy.task_id, reason, 3, curEassy.id)
+            const ors = await external.updateReward(roomid, author, roomName, ownerName, ownerData.count, 'newfeiyang', curEassy.task_id, reason, 3, curEassy.id)
             console.log(ownerData, ors, 'owner reward---')
 
             Reward.updateOne({ roomkey: ownerkey }, { $set: { data: ownerData } }, { upsert: true }, (err) => {
@@ -150,10 +153,15 @@ export default async (req, res) => {
             })
           }
 
+          // 更新组合
+          Team.updateOne({ roomid, compose: curTeam }, { $set: { ask: answerData.contactName, answer: ask } }, { upsert: true }, (err) => {
+            if (err) console.log(err)
+          })
+
           // 更新问题
           const newQs = await external.getQuestion(roomid)
           roomEassy[roomid] = newQs.data
-          console.log(newQs, 'update new question ---')          
+          console.log(newQs, 'update new question ---')
 
         }
       }

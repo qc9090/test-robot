@@ -98,7 +98,7 @@ export default ({ config, db }) => {
 
 		}
 
-		if (msg.content === curEassy['answer']) {
+		if (msg.content === curEassy['answer'] && msg.content.includes(`@${curSession['ask']}`)) {
 			console.log(msg.content, 'answer-----')
 			const { ask, askName, answer } = curSession
 			if (!answer) {
@@ -117,7 +117,7 @@ export default ({ config, db }) => {
 						}
 					})
 					if (teams.includes(curTeam)) {
-						reason = '您已经回答过别人的问题'
+						reason = '组合重复'
 					} else {
 						curSession['ask'] = ask
 						curSession['answer'] = id

@@ -88,7 +88,7 @@ export default async (req, res) => {
           session[curStep] = curSession
           curStep++
 
-          reason = `成功+1`
+          reason = `成功+${count}`
 
           // 计算回答者得分
           let askRs = await Reward.findOne({ roomkey }).exec()

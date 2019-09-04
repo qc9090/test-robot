@@ -91,7 +91,7 @@ export default ({ config, db }) => {
 				curSession['askName'] = contactName
 				session[curStep] = curSession
 			} else {
-				reason = '此问题已经被问过了'
+				reason = '问题已被问过'
 				const rs = await external.updateReason({room_id: roomid, wxid: id, task_id: curEassy.task_id, reason })
 				console.log(rs, reason)
 			}
@@ -103,7 +103,7 @@ export default ({ config, db }) => {
 			const { ask, askName, answer } = curSession
 			if (!answer) {
 				if (!ask) {
-					reason = '问题还没有抛出'
+					reason = '问题还没抛出'
 				} else if (id === ask) {
 					reason = '您不能回答自己的问题'
 				} else {

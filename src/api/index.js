@@ -92,9 +92,10 @@ export default ({ config, db }) => {
 				session[curStep] = curSession
 			} else {
 				reason = '此问题已经被问过了'
+				const rs = await external.updateReason({room_id: roomid, wxid: id, task_id: curEassy.task_id, reason })
+				console.log(rs, reason)
 			}
 
-			console.log(reason, '---reason----')
 		}
 
 		if (msg.content === curEassy['answer']) {
@@ -124,6 +125,8 @@ export default ({ config, db }) => {
 
 						session[curStep] = curSession
 						curStep++
+
+						reason = ''
 
 						// 计算回答者得分
 						let userData = chatAnalytics[roomkey]
@@ -182,6 +185,8 @@ export default ({ config, db }) => {
 			}
 
 			console.log(reason, '---reason----')
+			const rs = await external.updateReason({room_id: roomid, wxid: id, task_id: curEassy.task_id, reason })
+			console.log(rs, reason)
 		}
 
 		if (msg.content.trim() === '挖矿') {

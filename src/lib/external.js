@@ -4,6 +4,7 @@ const baseUrl = 'https://block.chain.pro/discovery-ad'
 // const baseUrl = 'http://192.168.1.170:18909/ad'
 
 const apiUpdateReward = `${baseUrl}/api/v1/chat/bot/set_question_user_index`
+const apiUpdateReason = `${baseUrl}/api/v1/chat/bot/update_reason`
 const apiGetMintRecord = `${baseUrl}/api/v1/chat/bot/get_user_index_by_roomid`
 const apiGetQuestion = `${baseUrl}/api/v1/chat/bot/question`
 
@@ -18,8 +19,16 @@ export async function getQuestion (roomid) {
   })
 }
 
+export async function updateReason (data) {
+  return rp({
+    method: 'POST',
+    url: apiUpdateReason,
+    body: data,
+    json: true
+  })
+}
+
 export async function updateReward (roomid, wxid, roomName, nickName, index, hlevel, taskId, reason, type, qid) {
-  console.log(roomid, wxid, roomName, nickName, index, hlevel, taskId, reason, type, qid, '---prams-------')
   return rp({
     method: 'POST',
     url: apiUpdateReward,

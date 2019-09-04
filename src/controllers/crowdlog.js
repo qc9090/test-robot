@@ -133,7 +133,7 @@ export default async (req, res) => {
           if (gs.msg) {
             const { author } = gs.data
             const ownerkey = `${roomid}${author}`
-            let ownerRs = await Reward.findOne({ roomkey: ownerKey }).exec()
+            let ownerRs = await Reward.findOne({ roomkey: ownerkey }).exec()
             let ownerData
             if (ownerRs) {
               ownerData = ownerRs.data

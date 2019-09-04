@@ -2,10 +2,9 @@ import multipart from 'connect-multiparty';
 import { version } from '../../package.json';
 import { Router } from 'express';
 import facets from './facets';
-// import { essay } from '../lib/essay'
 import msgController from '../controllers/crowdlog'
+import * as robotApi from '../api/robot'
 
-// let thisapikey
 // let chatAnalytics = {}
 // let session = []
 // let curStep = 0
@@ -28,7 +27,7 @@ export default ({ config, db }) => {
 			if (rs.code === 1) {
 				const { apikey } = rs.data
 				req.session.apikey = apikey
-				thisapikey = apikey
+				global.thisapikey = apikey
 
 				const rss = await robotApi.getWechatQrcode(apikey)
 				console.log(rss, 'login')

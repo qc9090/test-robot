@@ -2,7 +2,7 @@ import Reward from '../models/reward'
 import * as external from '../lib/external'
 import * as robotApi from '../api/robot'
 
-let thisapikey
+let thisapikey = global.apikey
 // let chatAnalytics = {}
 let session = []
 let curStep = 0

@@ -2,8 +2,6 @@ import Reward from '../models/reward'
 import * as external from '../lib/external'
 import * as robotApi from '../api/robot'
 
-let thisapikey = global.apikey
-// let chatAnalytics = {}
 let session = []
 let curStep = 0
 let roomEassy = {}
@@ -156,6 +154,7 @@ export default async (req, res) => {
   }
 
   if (msg.content.trim() === '挖矿') {
+    let thisapikey = global.apikey
     if (thisapikey) {
       console.log(thisapikey, 'apikey------')
       const { data: { report } } = await external.getMintHistory(roomid, curEassy.id)

@@ -20,7 +20,7 @@ const ADD_GROUP_LOG = `${baseUrl}/api/addgrouplog`
 /* wechat handler api*/
 const apiSendUrl = 'http://api.aiheisha.com/foreign/message/sendUrl.html'
 const apiGetOwner = 'http://api.aiheisha.com/foreign/group/owner.html'
-const apiGetTimeline = 'http://api.aiheisha.com/foreign/FriendCircle/getList.html'
+const apiGetTimeline = 'http://api.aiheisha.com/foreign/FriendCircle/newgetList.html'
 
 const hswebtime = parseInt(Date.now() / 1000) + '_' + random(32)
 const hash = crypto.createHash('md5')
@@ -128,7 +128,7 @@ export function getOwner (apikey, myAccount, gNumber) {
 }
 
 //
-export function getTimeline (apikey, myAccount, toAccount, load, callbackUrl, statusid, extend) {
+export function getTimeline (apikey, myAccount, toAccount, checkType, callbackUrl, statusid, extend) {
   return rp({
     method: 'POST',
     url: apiGetTimeline,
@@ -138,7 +138,7 @@ export function getTimeline (apikey, myAccount, toAccount, load, callbackUrl, st
     formData: {
       my_account: myAccount,
       to_account: toAccount,
-      load,
+      check_type: checkType,
       callback_url: callbackUrl,
       statusid,
       extend

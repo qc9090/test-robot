@@ -9,7 +9,7 @@ import session from 'express-session';
 
 import initializeDb from './db';
 import middleware from './middleware';
-import api from './api';
+import router from './router';
 import config from './config.json';
 
 let app = express();
@@ -57,7 +57,7 @@ initializeDb( db => {
 	app.use(middleware({ config, db }));
 
 	// api router
-	app.use('/api', api({ config, db }));
+	app.use('/api', router({ config, db }));
 
 	app.server.listen(process.env.PORT || config.port, async () => {
 		console.log(`Started on port ${app.server.address().port}`);

@@ -2,11 +2,12 @@ import Reward from '../models/reward'
 import Repeat from '../models/repeat'
 import Team from '../models/team'
 import * as external from '../lib/external'
-import * as robotApi from '../api/robot'
+import * as robotApi from '../lib/robot'
 
 let session = []
 let curStep = 0
 let roomEassy = {}
+let thisapikey = global.thisapikey
 
 export default async (req, res) => {
   console.log('crowd log', req.session, req.body)
@@ -177,10 +178,7 @@ export default async (req, res) => {
   }
 
   if (msg.content.trim() === '挖矿') {
-    console.log(global.thisapikey, 'key----')
-    let thisapikey = global.thisapikey
     if (thisapikey) {
-      console.log(thisapikey, 'apikey------')
       const { data: { report } } = await external.getMintHistory(roomid, curEassy.task_id)
       const url = `https://prabox.net/wechat-task/#/qa?roomid=${roomid}&taskid=4`
       const rs = await robotApi.sendUrl(thisapikey, myAccount, roomid, url, report.room_index, report.ranking)

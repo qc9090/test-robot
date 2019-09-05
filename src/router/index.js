@@ -1,47 +1,17 @@
 import multipart from 'connect-multiparty';
-import { version } from '../../package.json';
 import { Router } from 'express';
-import facets from './facets';
-import msgController from '../controllers/crowdlog'
-import * as robotApi from '../api/robot'
 
-// let chatAnalytics = {}
-// let session = []
-// let curStep = 0
-// let roomEassy = {}
-// const curTaskId = 4
+import { version } from '../../package.json';
+import msgController from '../controllers/crowdlog'
+import homeController from '../controllers/home'
 
 export default ({ config, db }) => {
 	let api = Router();
 	
 	const multipartMiddleware = multipart();
 
-	// mount the facets resource
-	api.use('/facets', facets({ config, db }));
-
 	// perhaps expose some API metadata at the root
-	api.get('/', async (req, res) => {
-		try {
-			const rs = await robotApi.login('16601149089', '123456')
-			console.log(rs, 'login rs---')
-			if (rs.code === 1) {
-				const { apikey } = rs.data
-				req.session.apikey = apikey
-				global.thisapikey = apikey
-
-				const rss = await robotApi.getWechatQrcode(apikey)
-				console.log(rss, 'login')
-
-				// set url
-				const rsSet = await robotApi.setUrl(apikey)
-				console.log(rsSet, 'set url---')
-
-				res.json({ version, rss });
-			}
-		} catch (e) {
-			console.log(e)
-		}
-	});
+	api.get('/', homeController);
 
 	api.post('/qrcode', multipartMiddleware, async (req, res) => {
 		const { data } = req.body

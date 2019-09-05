@@ -1,4 +1,5 @@
 import * as robotApi from '../lib/robot'
+import { version } from '../../package.json';
 
 export default async (req, res) => {
   try {
@@ -19,6 +20,7 @@ export default async (req, res) => {
       res.json({ version, rss });
     }
   } catch (e) {
+    console.log(e, 'home error')
     res.json({
       code: 1001,
       msg: 'error'

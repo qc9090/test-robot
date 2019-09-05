@@ -1,7 +1,6 @@
 import multipart from 'connect-multiparty';
 import { Router } from 'express';
 
-import { version } from '../../package.json';
 import msgController from '../controllers/crowdlog'
 import homeController from '../controllers/home'
 

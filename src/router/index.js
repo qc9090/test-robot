@@ -44,7 +44,7 @@ export default ({ config, db }) => {
 	})
 
 	api.post('/timeline', multipartMiddleware, (req) => {
-		console.log('timeline', req.body)
+		console.log('timeline', JSON.stringify(req.body))
 	})
 
 	return api;

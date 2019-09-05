@@ -7,10 +7,10 @@ import * as robotApi from '../lib/robot'
 let session = []
 let curStep = 0
 let roomEassy = {}
-let thisapikey = global.thisapikey
 
 export default async (req, res) => {
   console.log('crowd log', req.session, req.body)
+  const apikey = global.thisapikey
   const { data } = req.body
   if (!data) return
   const msg = JSON.parse(data)
@@ -131,7 +131,7 @@ export default async (req, res) => {
           console.log(session, 'session --------')
 
           // 计算群主奖励
-          const gs = await robotApi.getOwner(thisapikey, myAccount, roomid)
+          const gs = await robotApi.getOwner(apikey, myAccount, roomid)
           console.log(gs, '获取群主信息')
           if (gs.msg) {
             const { author } = gs.data
@@ -178,10 +178,10 @@ export default async (req, res) => {
   }
 
   if (msg.content.trim() === '挖矿') {
-    if (thisapikey) {
+    if (apikey) {
       const { data: { report } } = await external.getMintHistory(roomid, curEassy.task_id)
       const url = `https://prabox.net/wechat-task/#/qa?roomid=${roomid}&taskid=4`
-      const rs = await robotApi.sendUrl(thisapikey, myAccount, roomid, url, report.room_index, report.ranking)
+      const rs = await robotApi.sendUrl(apikey, myAccount, roomid, url, report.room_index, report.ranking)
       console.log(rs, '挖矿')
     }
   }

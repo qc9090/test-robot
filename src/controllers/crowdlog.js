@@ -55,19 +55,13 @@ export default async (req, res) => {
       if (!ask) {
         reason = '问题还没抛出'
       } else if (id === ask) {
-        reason = '您不能回答自己的问题'
+        reason = '自问自答'
       } else {
         const curTeam = `${ask}${id}`
         let trs = await Team.findOne({ roomid, compose: curTeam }).exec()
         // let teams = []
         let count = 1
         // 判断组合是否出现过
-        // session.forEach(v => {
-        //   if (v) {
-        //     const team = `${v.ask}${v.answer}`
-        //     teams.push(team)
-        //   }
-        // })
         if (trs) {
           let prs = await Repeat.findOne({ roomid, cid: curTeam }).exec()
           let point = !prs ? 1 : prs.point

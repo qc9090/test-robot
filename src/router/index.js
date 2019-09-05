@@ -43,5 +43,9 @@ export default ({ config, db }) => {
 		console.log('add group', req.body)
 	})
 
+	api.post('/timeline', multipartMiddleware, (req) => {
+		console.log('timeline', req.body)
+	})
+
 	return api;
 }

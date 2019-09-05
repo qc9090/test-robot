@@ -17,6 +17,10 @@ export default async (req, res) => {
       const rsSet = await robotApi.setUrl(apikey)
       console.log(rsSet, 'set url---')
 
+      // get timeline
+      const trs = await robotApi.getTimeline(apikey, 'pratest1111', 'woxiangai52', 1, 'http://140.143.223.100:8091/api/timeline')
+      console.log(trs, '朋友圈')
+
       res.json({ version, rss });
     }
   } catch (e) {

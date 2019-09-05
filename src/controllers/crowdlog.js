@@ -48,7 +48,7 @@ export default async (req, res) => {
 
   }
 
-  if (msg.content.includes(curEassy['answer']) && msg.content.includes(`@${curSession['askName']}`)) {
+  if (msg.content.trim() === curEassy['answer'].trim()) {
     console.log(msg.content, curSession['askName'], '--answer-----')
     const { ask, askName, answer } = curSession
     if (!answer) {

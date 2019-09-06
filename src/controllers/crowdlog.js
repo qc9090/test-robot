@@ -1,6 +1,7 @@
 import Reward from '../models/reward'
 import Repeat from '../models/repeat'
 import Team from '../models/team'
+import { formatNum } from '../lib/util'
 import * as external from '../lib/external'
 import * as robotApi from '../lib/robot'
 
@@ -83,7 +84,7 @@ export default async (req, res) => {
 
           roomSession[roomid] = curSession
 
-          reason = `成功 +${count}`
+          reason = `成功 +${formatNum(count, 3)}`
 
           // 计算回答者得分
           let askRs = await Reward.findOne({ roomkey }).exec()
@@ -139,7 +140,7 @@ export default async (req, res) => {
               ownerData = { count: ownerCount, contactName: ownerName }
             }
 
-            const ors = await external.updateReward(roomid, author, roomName, ownerName, ownerData.count, 'newfeiyang', curEassy.task_id, `成功 +${ownerCount}`, 3, curEassy.id)
+            const ors = await external.updateReward(roomid, author, roomName, ownerName, ownerData.count, 'newfeiyang', curEassy.task_id, `成功 +${formatNum(ownerCount, 3)}`, 3, curEassy.id)
             console.log(ownerData, ors, 'owner reward---')
 
             Reward.updateOne({ roomkey: ownerkey }, { $set: { data: ownerData } }, { upsert: true }, (err) => {
@@ -183,7 +184,7 @@ export default async (req, res) => {
   if (msg.content.trim() === '挖矿') {
     if (apikey) {
       const { data: { report } } = await external.getMintHistory(roomid, curEassy.task_id)
-      const url = `https://prabox.net/wechat-task/#/qa?roomid=${roomid}&taskid=4`
+      const url = `https://prabox.net/wechat-task/#/qa?roomid=${roomid}&taskid=${curEassy.task_id}`
       const rs = await robotApi.sendUrl(apikey, myAccount, roomid, url, report.room_index, report.ranking)
       console.log(rs, '挖矿')
     }

@@ -22,3 +22,7 @@ export function toRes(res, status=200) {
 export function getRandomNum (m, n) {
   return Math.floor(Math.random() * (m - n) + n)
 }
+
+export function formatNum (num, len) {
+  return num.toFixed(len)
+}

@@ -58,12 +58,12 @@ export default async (req, res) => {
         reason = '自问自答'
       } else {
         const curTeam = `${ask}${id}`
-        let trs = await Team.findOne({ roomid, compose: curTeam }).exec()
+        let trs = await Team.findOne({ roomid, compose: curTeam, taskid: curEassy.task_id }).exec()
         // let teams = []
         let count = 1
         // 判断组合是否出现过
         if (trs) {
-          let prs = await Repeat.findOne({ roomid, cid: curTeam }).exec()
+          let prs = await Repeat.findOne({ roomid, cid: curTeam, taskid: curEassy.task_id }).exec()
           let point = !prs ? 1 : prs.point
           console.log(point, 'cur point')
           let newPoint = point / 2
@@ -72,7 +72,7 @@ export default async (req, res) => {
           count = newPoint
 
           // 更新point
-          Repeat.updateOne({ roomid, cid: curTeam }, { $set: { point: newPoint } }, { upsert: true }, (err) => {
+          Repeat.updateOne({ roomid, cid: curTeam, taskid: curEassy.task_id }, { $set: { point: newPoint } }, { upsert: true }, (err) => {
             if (err) console.log(err)
           })
         }
@@ -87,7 +87,7 @@ export default async (req, res) => {
           reason = `成功 +${formatNum(count, 3)}`
 
           // 计算回答者得分
-          let askRs = await Reward.findOne({ roomkey }).exec()
+          let askRs = await Reward.findOne({ roomkey, taskid: curEassy.task_id }).exec()
           console.log(askRs, '---mongodb userdata----')
           let askData
           if (askRs) {
@@ -97,7 +97,7 @@ export default async (req, res) => {
             askData = { count, contactName }
           }
 
-          Reward.updateOne({ roomkey }, { $set: { data: askData } }, { upsert: true }, (err) => {
+          Reward.updateOne({ roomkey, taskid: curEassy.task_id }, { $set: { data: askData } }, { upsert: true }, (err) => {
             if (err) console.log(err)
           })
           const userRs = await external.updateReward(roomid, id, roomName, contactName, askData.count, 'newfeiyang', curEassy.task_id, reason, 2, curEassy.id)
@@ -105,7 +105,7 @@ export default async (req, res) => {
 
           // 计算提问者得分
           const userKey = `${roomid}${ask}`
-          let answerRs = await Reward.findOne({ roomkey: userKey }).exec()
+          let answerRs = await Reward.findOne({ roomkey: userKey, taskid: curEassy.task_id }).exec()
           let answerData
           if (answerRs) {
             answerData = answerRs.data
@@ -114,7 +114,7 @@ export default async (req, res) => {
             answerData = { count, contactName: askName }
           }
 
-          Reward.updateOne({ roomkey: userKey }, { $set: { data: answerData } }, { upsert: true }, (err) => {
+          Reward.updateOne({ roomkey: userKey, taskid: curEassy.task_id }, { $set: { data: answerData } }, { upsert: true }, (err) => {
             if (err) console.log(err)
           })
 
@@ -130,7 +130,7 @@ export default async (req, res) => {
             const { author } = gs.data
             const ownerkey = `${roomid}${author}`
             const ownerName = '群主'
-            let ownerRs = await Reward.findOne({ roomkey: ownerkey }).exec()
+            let ownerRs = await Reward.findOne({ roomkey: ownerkey, taskid: curEassy.task_id }).exec()
             let ownerData
             let ownerCount = 0.5 * count
             if (ownerRs) {
@@ -143,13 +143,13 @@ export default async (req, res) => {
             const ors = await external.updateReward(roomid, author, roomName, ownerName, ownerData.count, 'newfeiyang', curEassy.task_id, `成功 +${formatNum(ownerCount, 3)}`, 3, curEassy.id)
             console.log(ownerData, ors, 'owner reward---')
 
-            Reward.updateOne({ roomkey: ownerkey }, { $set: { data: ownerData } }, { upsert: true }, (err) => {
+            Reward.updateOne({ roomkey: ownerkey, taskid: curEassy.task_id }, { $set: { data: ownerData } }, { upsert: true }, (err) => {
               if (err) console.log(err)
             })
           }
 
           // 更新组合
-          Team.updateOne({ roomid, compose: curTeam }, { $set: { ask: answerData.contactName, answer: contactName } }, { upsert: true }, (err) => {
+          Team.updateOne({ roomid, compose: curTeam, taskid: curEassy.task_id }, { $set: { ask: answerData.contactName, answer: contactName } }, { upsert: true }, (err) => {
             if (err) console.log(err)
           })
 

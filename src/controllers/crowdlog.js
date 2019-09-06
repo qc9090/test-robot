@@ -157,7 +157,7 @@ export default async (req, res) => {
           // 更新问题
           roomEassy[roomid]['timePast'] = 0
           if (roomEassy[roomid]['qTimer']) clearInterval(roomEassy[roomid]['qTimer'])
-          roomEassy[roomid]['qTimer'] = setInterval(() => {
+          roomEassy[roomid]['qTimer'] = setInterval(async () => {
             console.log(roomEassy[roomid]['timePast'], 'time past -----')
             if (roomEassy[roomid]['timePast'] > 5 * 60) {
               const newQs = await external.getQuestion(roomid)

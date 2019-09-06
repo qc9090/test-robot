@@ -164,9 +164,9 @@ export default async (req, res) => {
               console.log(newQs, 'update new question ---')
               const old = roomEassy[roomid]
               if (old.question !== newQs.data.question) {
+                clearInterval(roomEassy[roomid]['qTimer'])
                 roomEassy[roomid] = newQs.data
                 curStep++
-                clearInterval(roomEassy[roomid]['qTimer'])
               }
             }
             roomEassy[roomid]['timePast']++

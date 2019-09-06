@@ -7,6 +7,7 @@ import * as robotApi from '../lib/robot'
 let session = []
 let curStep = 0
 let roomEassy = {}
+let qTimer
 
 export default async (req, res) => {
   console.log('crowd log', req.session, req.body)
@@ -83,7 +84,7 @@ export default async (req, res) => {
           curSession['isFinished'] = true
 
           session[curStep] = curSession
-          curStep++
+          // curStep++
 
           reason = `成功 +${count}`
 
@@ -156,9 +157,24 @@ export default async (req, res) => {
 
           // 更新问题
           const newQs = await external.getQuestion(roomid)
-          roomEassy[roomid] = newQs.data
           console.log(newQs, 'update new question ---')
+          const now = Date.now()
+          const lastUpdate = new Date(newQs.data.last_update).getTime()
+          let timePast = (now - lastUpdate) / 1000
 
+          if (qTimer) clearInterval(qTimer)
+          qTimer = setInterval(() => {
+            console.log(timePast, newQs.data, 'time past -----')
+            if (timePast > 5 * 60) {
+              const old = roomEassy[roomid]
+              if (old.question !== newQs.data.question) {
+                roomEassy[roomid] = newQs.data
+                curStep++
+                clearInterval(qTimer)
+              }
+            }
+            timePast--
+          }, 1000)
         }
       }
     } else {

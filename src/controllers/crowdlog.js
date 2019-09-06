@@ -173,7 +173,7 @@ export default async (req, res) => {
                 clearInterval(qTimer)
               }
             }
-            timePast--
+            timePast++
           }, 1000)
         }
       }

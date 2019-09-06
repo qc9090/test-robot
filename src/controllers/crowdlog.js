@@ -4,12 +4,11 @@ import Team from '../models/team'
 import * as external from '../lib/external'
 import * as robotApi from '../lib/robot'
 
-let session = []
-let curStep = 0
 let roomEassy = {}
+let roomSession = {}
 
 export default async (req, res) => {
-  console.log('crowd log', req.session, req.body)
+  console.log('crowd log', req.body)
   const apikey = global.thisapikey
   const { data } = req.body
   if (!data) return
@@ -23,7 +22,7 @@ export default async (req, res) => {
   const roomkey = `${roomid}${id}`
 
   let reason = ''
-  let curSession = session[curStep] || {}
+  let curSession = roomSession[roomid] || {}
 
   if (!roomEassy[roomid]) {
     const { data: cdata } = await external.getQuestion(roomid)
@@ -39,7 +38,7 @@ export default async (req, res) => {
     if (!curSession.ask) {
       curSession['ask'] = id
       curSession['askName'] = contactName
-      session[curStep] = curSession
+      roomSession[roomid] = curSession
     } else {
       reason = '问题已被问过'
       const rs = await external.updateReason({room_id: roomid, wxid: id, task_id: curEassy.task_id, reason })
@@ -82,8 +81,7 @@ export default async (req, res) => {
           curSession['answer'] = id
           curSession['isFinished'] = true
 
-          session[curStep] = curSession
-          // curStep++
+          roomSession[roomid] = curSession
 
           reason = `成功 +${count}`
 
@@ -122,7 +120,7 @@ export default async (req, res) => {
           const user1Rs = await external.updateReward(roomid, ask, roomName, answerData.contactName, answerData.count, 'newfeiyang', curEassy.task_id, reason, 1, curEassy.id)
           console.log(answerData, user1Rs, 'ask reward---')
 
-          console.log(session, 'session --------')
+          console.log(roomSession[roomid], 'session --------')
 
           // 计算群主奖励
           const gs = await robotApi.getOwner(apikey, myAccount, roomid)
@@ -166,7 +164,7 @@ export default async (req, res) => {
               if (old.question !== newQs.data.question) {
                 clearInterval(roomEassy[roomid]['qTimer'])
                 roomEassy[roomid] = newQs.data
-                curStep++
+                roomSession[roomid] = {}
               }
             }
             roomEassy[roomid]['timePast']++

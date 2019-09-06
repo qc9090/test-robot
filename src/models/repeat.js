@@ -5,6 +5,7 @@ const Schema = mongoose.Schema
 var RewardSchema = new Schema({
   roomid: String,
   cid: String,
+  taskid: Number,
   point: Number
 })
 

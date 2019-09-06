@@ -18,7 +18,7 @@ export default async (req, res) => {
   const myAccount = msg.my_account
   const roomid = msg.g_number
   const roomName = msg.g_name
-  const id = msg.to_account
+  const id = msg.to_account_alias || msg.to_account
   const contactName = msg.to_name
   const roomkey = `${roomid}${id}`
 

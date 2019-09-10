@@ -35,7 +35,7 @@ export default ({ config, db }) => {
 		res.json({})
 	})
 
-	api.post('/wacatout', multipartMiddleware, (req) => {
+	api.post('/wachatout', multipartMiddleware, (req) => {
 		console.log('bot status', req.body)
 	})
 

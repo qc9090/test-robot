@@ -21,6 +21,10 @@ export default async (req, res) => {
       // const trs = await robotApi.getTimeline(apikey, 'pratest1111', 'ZLT911226', 2, 'http://140.143.223.100:8091/api/timeline')
       // console.log(trs, '朋友圈')
 
+      // group info
+      const grs = await robotApi.getGroupMember(apikey, 'pratest1111', '4655882583@chatroom')
+      console.log(grs, '朋友列表')
+
       res.json({ version, rss });
     }
   } catch (e) {

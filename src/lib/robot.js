@@ -21,6 +21,7 @@ const ADD_GROUP_LOG = `${baseUrl}/api/addgrouplog`
 const apiSendUrl = 'http://api.aiheisha.com/foreign/message/sendUrl.html'
 const apiGetOwner = 'http://api.aiheisha.com/foreign/group/owner.html'
 const apiGetTimeline = 'http://api.aiheisha.com/foreign/FriendCircle/newgetList.html'
+const apiGetGroupMember = `http://api.aiheisha.com/foreign/group/info.html`
 
 const hswebtime = parseInt(Date.now() / 1000) + '_' + random(32)
 const hash = crypto.createHash('md5')
@@ -127,7 +128,7 @@ export function getOwner (apikey, myAccount, gNumber) {
   })
 }
 
-//
+// 获取朋友圈
 export function getTimeline (apikey, myAccount, toAccount, checkType, callbackUrl, statusid, extend) {
   return rp({
     method: 'POST',
@@ -142,6 +143,22 @@ export function getTimeline (apikey, myAccount, toAccount, checkType, callbackUr
       callback_url: callbackUrl,
       statusid,
       extend
+    },
+    json: true
+  })
+}
+
+// 获取群成员
+export function getGroupMember (apikey, myAccount, gNumber) {
+  return rp({
+    method: 'POST',
+    url: apiGetGroupMember,
+    headers: {
+      apikey
+    },
+    formData: {
+      my_account: myAccount,
+      g_number: gNumber
     },
     json: true
   })

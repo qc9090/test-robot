@@ -50,7 +50,6 @@ const createDid = (wxid, superior) => {
     const { address, publicKey } = pair
     const pairKeystore = JSON.stringify(keyring.toJson(address, 'test123456'), null, 2)
     const pairSeed = JSON.stringify({ address, seed: mnemonicPhrase })
-    newAccount = address
     console.log(address, 'new address')
 
     const ALICE = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'

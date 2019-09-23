@@ -31,6 +31,10 @@
   "author": "Jason Miller <jason@developit.ca>",
   "license": "MIT",
   "dependencies": {
+    "@polkadot/api": "^0.92.1",
+    "@polkadot/keyring": "^1.4.1",
+    "@polkadot/util": "^1.4.1",
+    "@polkadot/util-crypto": "^1.4.1",
     "body-parser": "^1.13.3",
     "compression": "^1.5.2",
     "connect-multiparty": "^2.2.0",

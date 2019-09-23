@@ -1,12 +1,96 @@
+import fs from 'fs'
+import path from 'path'
+import { mnemonicGenerate } from '@polkadot/util-crypto'
+import Keyring from '@polkadot/keyring'
+import testKeyring from '@polkadot/keyring/testing'
+import { ApiPromise, WsProvider } from '@polkadot/api'
+import { u8aToHex } from '@polkadot/util'
+
 import Reward from '../models/reward'
 import Repeat from '../models/repeat'
 import Team from '../models/team'
-import { formatNum } from '../lib/util'
+import { formatNum, didToHex } from '../lib/util'
 import * as external from '../lib/external'
 import * as robotApi from '../lib/robot'
 
 let roomEassy = {}
 let roomSession = {}
+
+const WS_PROVIDER = 'wss://substrate.chain.pro/ws'
+const provider = new WsProvider(WS_PROVIDER)
+let api
+ApiPromise.create({
+  provider,
+  types: {
+    "MetadataRecord": {
+      "address": "AccountId",
+      "superior": "Hash",
+      "creator": "AccountId"
+    }
+  }
+}).then(res => {
+  api = res
+  console.log('api created')
+}).catch(e => {
+  console.error(e, 'create api error')
+})
+
+const createDid = (wxid, superior) => {
+  console.log(wxid, 'current wxid')
+  const mnemonicPhrase = mnemonicGenerate()
+  const keyring = new Keyring({ type: 'sr25519' })
+
+  keyring.addFromMnemonic(mnemonicPhrase)
+  console.log(`Generated mnemonic: ${mnemonicPhrase}`)
+
+  keyring
+  .getPairs()
+  .forEach(async (pair, index) => {
+    const tkeyring = testKeyring.default()
+    const { address, publicKey } = pair
+    const pairKeystore = JSON.stringify(keyring.toJson(address, 'test123456'), null, 2)
+    const pairSeed = JSON.stringify({ address, seed: mnemonicPhrase })
+    newAccount = address
+    console.log(address, 'new address')
+
+    const ALICE = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
+    const nonce = await api.query.system.accountNonce(ALICE)
+    const alicePair = tkeyring.getPair(ALICE)
+
+    // const superior = 'did:pra:p2kjSaV9dxqqZG6SLNEgSucK5ZAt6pKq1iEXBr47gad4M'
+    const mySuperior = didToHex(superior)
+
+    const pubkey = u8aToHex(publicKey)
+
+    api.tx.did.create(pubkey, address, mySuperior)
+    .signAndSend(alicePair, { nonce }, ({ events = [], status }) => {
+      console.log('Transaction status:', status.type)
+
+      if (status.isFinalized) {
+        console.log('Completed at block hash', status.asFinalized.toHex())
+        console.log('Events:')
+
+        events.forEach(({ phase, event: { data, method, section } }) => {
+          console.log('\t', phase.toString(), `: ${section}.${method}`, data.toString())
+        })
+
+      }
+    })
+
+    const basePath = path.join(process.cwd(), './static')
+    console.log(basePath, 'bath path')
+    fs.writeFile(`${basePath}/key_stores/${address}.json`, pairKeystore, err => {
+      if(err) return console.log(err)
+      console.log('create key pair successfully')
+    })
+
+    fs.writeFile(`${basePath}/keys/${address}.json`, pairSeed, err => {
+      if(err) return console.log(err)
+      console.log('save pair seed successfully')
+    })
+    
+  })
+}
 
 export default async (req, res) => {
   console.log('crowd log', req.body)
@@ -188,6 +272,10 @@ export default async (req, res) => {
       const rs = await robotApi.sendUrl(apikey, myAccount, roomid, url, report.room_index, report.ranking)
       console.log(rs, '挖矿')
     }
+  }
+
+  if (msg.content.trim() === '创建账号') {
+    createDid(id, 'did:pra:p2kjSaV9dxqqZG6SLNEgSucK5ZAt6pKq1iEXBr47gad4M')
   }
 
   res.json({})

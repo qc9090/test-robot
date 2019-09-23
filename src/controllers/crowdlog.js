@@ -46,7 +46,7 @@ const createDid = (wxid, superior) => {
   keyring
   .getPairs()
   .forEach(async (pair, index) => {
-    const tkeyring = testKeyring.default()
+    const tkeyring = testKeyring()
     const { address, publicKey } = pair
     const pairKeystore = JSON.stringify(keyring.toJson(address, 'test123456'), null, 2)
     const pairSeed = JSON.stringify({ address, seed: mnemonicPhrase })

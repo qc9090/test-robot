@@ -19,6 +19,8 @@ const ADD_GROUP_LOG = `${baseUrl}/api/addgrouplog`
 
 /* wechat handler api*/
 const apiSendUrl = 'http://api.aiheisha.com/foreign/message/sendUrl.html'
+const apiSendChat = 'http://api.aiheisha.com/foreign/message/send.html'
+const apiGroupAt = 'http://api.aiheisha.com/foreign/group/groupAt.html'
 const apiGetOwner = 'http://api.aiheisha.com/foreign/group/owner.html'
 const apiGetTimeline = 'http://api.aiheisha.com/foreign/FriendCircle/newgetList.html'
 const apiGetGroupMember = `http://api.aiheisha.com/foreign/group/info.html`
@@ -86,6 +88,42 @@ export function setUrl (apikey) {
       addfriendlog: ADD_FRIEND_LOG,
       wecatout: WACAT_OUT,
       addgrouplog: ADD_GROUP_LOG
+    },
+    json: true
+  })
+}
+
+// 发送消息
+export function sendChat (apikey, myAccount, toAccount, content) {
+  return rp({
+    method: 'POST',
+    url: apiSendChat,
+    headers: {
+      apikey
+    },
+    formData: {
+      my_account: myAccount,
+      to_account: toAccount,
+      content,
+      content_type: 2,
+    },
+    json: true
+  })
+}
+
+// 群聊@
+export function groupAt (apikey, myAccount, account, content) {
+  return rp({
+    method: 'POST',
+    url: apiGroupAt,
+    headers: {
+      apikey
+    },
+    formData: {
+      my_account: myAccount,
+      account,
+      content,
+      content_type: 2,
     },
     json: true
   })

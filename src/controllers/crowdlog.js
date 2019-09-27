@@ -4,12 +4,12 @@ import { mnemonicGenerate } from '@polkadot/util-crypto'
 import Keyring from '@polkadot/keyring'
 import testKeyring from '@polkadot/keyring/testing'
 import { ApiPromise, WsProvider } from '@polkadot/api'
-import { u8aToHex } from '@polkadot/util'
+import { u8aToHex, stringToHex } from '@polkadot/util'
 
 import Reward from '../models/reward'
 import Repeat from '../models/repeat'
 import Team from '../models/team'
-import { formatNum, didToHex } from '../lib/util'
+import { formatNum } from '../lib/util'
 import * as external from '../lib/external'
 import * as robotApi from '../lib/robot'
 
@@ -22,10 +22,16 @@ let api
 ApiPromise.create({
   provider,
   types: {
-    "MetadataRecord": {
-      "address": "AccountId",
-      "superior": "Hash",
-      "creator": "AccountId"
+    'MetadataRecord': {
+      'address': 'AccountId',
+      'superior': 'Hash',
+      'creator': 'AccountId',
+      'did_type': 'Vec<u8>',
+      'max_rewards': 'Option<Balance>',
+      'locked_funds': 'Option<Balance>',
+      'locked_time': 'Option<Moment>',
+      'locked_period': 'Option<Moment>',
+      'social_account': 'Option<Hash>'
     }
   }
 }).then(res => {
@@ -35,8 +41,7 @@ ApiPromise.create({
   console.error(e, 'create api error')
 })
 
-const createDid = (wxid, superior) => {
-  console.log(wxid, 'current wxid')
+const createDid = (wxid, ownerid, apikey, myAccount, roomid) => {
   const mnemonicPhrase = mnemonicGenerate()
   const keyring = new Keyring({ type: 'sr25519' })
 
@@ -56,13 +61,13 @@ const createDid = (wxid, superior) => {
     const nonce = await api.query.system.accountNonce(ALICE)
     const alicePair = tkeyring.getPair(ALICE)
 
-    // const superior = 'did:pra:p2kjSaV9dxqqZG6SLNEgSucK5ZAt6pKq1iEXBr47gad4M'
-    const mySuperior = didToHex(superior)
-
     const pubkey = u8aToHex(publicKey)
 
-    api.tx.did.create(pubkey, address, mySuperior)
-    .signAndSend(alicePair, { nonce }, ({ events = [], status }) => {
+    const social_account = stringToHex(wxid)
+    const social_superior = stringToHex(ownerid)
+
+    api.tx.did.create(pubkey, address, '', social_account, social_superior)
+    .signAndSend(alicePair, { nonce }, async ({ events = [], status }) => {
       console.log('Transaction status:', status.type)
 
       if (status.isFinalized) {
@@ -72,7 +77,10 @@ const createDid = (wxid, superior) => {
         events.forEach(({ phase, event: { data, method, section } }) => {
           console.log('\t', phase.toString(), `: ${section}.${method}`, data.toString())
         })
-
+        
+        const content = '恭喜您创建PRA账户成功！该账户已经与你的微信号绑定，您在微信群中获得的收益将直接转入该账户中。'
+        const rs = await robotApi.groupAt(apikey, myAccount, roomid, wxid, content)
+        console.log(rs, '挖矿')
       }
     })
 
@@ -104,6 +112,7 @@ export default async (req, res) => {
   const id = msg.to_account_alias || msg.to_account
   const contactName = msg.to_name
   const roomkey = `${roomid}${id}`
+  let ownerid
 
   let reason = ''
   let curSession = roomSession[roomid] || {}
@@ -115,6 +124,14 @@ export default async (req, res) => {
   }
   let curEassy = roomEassy[roomid]
 
+  if (!ownerid) {
+    const gs = await robotApi.getOwner(apikey, myAccount, roomid)
+    console.log(gs, '获取群主信息ownerid')
+    if (gs.msg) {
+      ownerid = gs.data
+    }
+  }
+    
   // 问答广告
   // if (msg.content === essay[curStep]['q'].trim()) {
   if (msg.content === curEassy['question']) {
@@ -274,7 +291,7 @@ export default async (req, res) => {
   }
 
   if (msg.content.trim() === '创建账号') {
-    createDid(id, 'did:pra:p2kjSaV9dxqqZG6SLNEgSucK5ZAt6pKq1iEXBr47gad4M')
+    createDid(id, ownerid, apikey, myAccount, roomid)
   }
 
   res.json({})

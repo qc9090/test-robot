@@ -112,7 +112,7 @@ export function sendChat (apikey, myAccount, toAccount, content) {
 }
 
 // 群聊@
-export function groupAt (apikey, myAccount, account, content) {
+export function groupAt (apikey, myAccount, account, atUser, content) {
   return rp({
     method: 'POST',
     url: apiGroupAt,
@@ -122,8 +122,8 @@ export function groupAt (apikey, myAccount, account, content) {
     formData: {
       my_account: myAccount,
       account,
-      content,
-      content_type: 2,
+      atUser,
+      content
     },
     json: true
   })

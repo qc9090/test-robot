@@ -81,7 +81,7 @@ const createDid = (wxid, ownerid, apikey, myAccount, roomid) => {
         
         const content = '恭喜您创建PRA账户成功！该账户已经与你的微信号绑定，您在微信群中获得的收益将直接转入该账户中。'
         const rs = await robotApi.groupAt(apikey, myAccount, roomid, wxid, content)
-        console.log(rs, '挖矿')
+        console.log(rs, '创建账号成功')
       }
     })
 

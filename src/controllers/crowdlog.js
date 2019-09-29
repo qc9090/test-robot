@@ -68,7 +68,7 @@ const createDid = (wxid, ownerid, apikey, myAccount, roomid) => {
     const social_superior = stringToHex(ownerid)
     const did_type = stringToHex('wechat')
 
-    console.log(ownerid, 'ownerid------')
+    console.log(wxid, ownerid, 'ownerid------')
     api.tx.did.create(pubkey, address, did_type, '', social_account, social_superior)
     .signAndSend(alicePair, { nonce }, async ({ events = [], status }) => {
       console.log('Transaction status:', status.type)
@@ -81,12 +81,11 @@ const createDid = (wxid, ownerid, apikey, myAccount, roomid) => {
           console.log('\t', phase.toString(), `: ${section}.${method}`, data.toString())
         })
         
-        let did = await api.query.did.identity(address)
-        did = hexToDid(did)
-        console.log(did, 'did created')
+        // let did = await api.query.did.identity(address)
+        // did = hexToDid(did)
+        // console.log(did, 'did created')
         
         const content = `恭喜您创建PRA账户成功！
-        您的账户为${did}
         该账户已经与你的微信号绑定，您在微信群中获得的收益将直接转入该账户中。
         您的账户链接：https://prabox.net/
         请收藏`
@@ -301,7 +300,7 @@ export default async (req, res) => {
   }
 
   if (msg.content.trim() === '创建账号') {
-    createDid(id, roomOwner[roomid], apikey, myAccount, roomid)
+    createDid(msg.to_account, roomOwner[roomid], apikey, myAccount, roomid)
   }
 
   res.json({})

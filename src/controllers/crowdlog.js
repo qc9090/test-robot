@@ -130,7 +130,7 @@ export default async (req, res) => {
     const gs = await robotApi.getOwner(apikey, myAccount, roomid)
     console.log(gs, roomName, '获取群主信息ownerid')
     if (gs.msg) {
-      roomOwner[roomid] = gs.data
+      roomOwner[roomid] = gs.data.author
     }
   }
     

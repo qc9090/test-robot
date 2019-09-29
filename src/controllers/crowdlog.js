@@ -300,7 +300,7 @@ export default async (req, res) => {
   }
 
   if (msg.content.trim() === '创建账号') {
-    createDid(msg.to_account, roomOwner[roomid], apikey, myAccount, roomid)
+    createDid(id, roomOwner[roomid], apikey, myAccount, roomid)
   }
 
   res.json({})

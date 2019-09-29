@@ -68,7 +68,7 @@ const createDid = (wxid, ownerid, apikey, myAccount, roomid, contactName) => {
     const social_superior = stringToHex(ownerid)
     const did_type = stringToHex('wechat')
 
-    console.log(wxid, ownerid, 'ownerid------')
+    console.log(wxid, ownerid, contactName, 'ownerid------')
     api.tx.did.create(pubkey, address, did_type, '', social_account, social_superior)
     .signAndSend(alicePair, { nonce }, async ({ events = [], status }) => {
       console.log('Transaction status:', status.type)

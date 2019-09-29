@@ -311,9 +311,10 @@ export default async (req, res) => {
     if (apikey) {
       const redirectUri = encodeURIComponent(`${REDIRECT_URI}/#/my-reward`)
       const url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`
-      const { data: { result } } = await external.generateShortDomain(url)
+      const data = await external.generateShortDomain(url)
       
-      const rs = await robotApi.sendUrl(apikey, myAccount, roomid, result, 0, 0)
+      console.log(data)
+      const rs = await robotApi.sendUrl(apikey, myAccount, roomid, url, 0, 0)
       console.log(rs, '挖矿')
     }
   }

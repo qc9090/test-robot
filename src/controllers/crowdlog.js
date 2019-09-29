@@ -15,6 +15,7 @@ import * as robotApi from '../lib/robot'
 
 let roomEassy = {}
 let roomSession = {}
+let roomOwner = {}
 
 const WS_PROVIDER = 'wss://substrate.chain.pro/ws'
 const provider = new WsProvider(WS_PROVIDER)
@@ -113,7 +114,6 @@ export default async (req, res) => {
   const id = msg.to_account_alias || msg.to_account
   const contactName = msg.to_name
   const roomkey = `${roomid}${id}`
-  let ownerid
 
   let reason = ''
   let curSession = roomSession[roomid] || {}
@@ -125,11 +125,11 @@ export default async (req, res) => {
   }
   let curEassy = roomEassy[roomid]
 
-  if (!ownerid) {
+  if (!roomOwner[roomid]) {
     const gs = await robotApi.getOwner(apikey, myAccount, roomid)
     console.log(gs, '获取群主信息ownerid')
     if (gs.msg) {
-      ownerid = gs.data
+      roomOwner[roomid] = gs.data
     }
   }
     
@@ -292,7 +292,7 @@ export default async (req, res) => {
   }
 
   if (msg.content.trim() === '创建账号') {
-    createDid(id, ownerid, apikey, myAccount, roomid)
+    createDid(id, roomOwner[roomid], apikey, myAccount, roomid)
   }
 
   res.json({})

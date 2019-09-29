@@ -93,9 +93,9 @@ const createDid = (wxid, ownerid, apikey, myAccount, roomid, contactName) => {
           
           const redirectUri = encodeURIComponent(`${REDIRECT_URI}/#/my-reward`)
           const url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`
-          const { data: { result } } = await external.generateShortDomain(url)
+          // const { data: { result } } = await external.generateShortDomain(url)
 
-          const content = `@${contactName} 恭喜您创建PRA账户成功！您的账户为${did}，该账户已经与你的微信号绑定，您在微信群中获得的收益将直接转入该账户中。您的账户链接：${result}请收藏`
+          const content = `@${contactName} 恭喜您创建PRA账户成功！该账户已经与你的微信号绑定，您在微信群中获得的收益将直接转入该账户中。您的账户链接：${url}请收藏`
           const rs = await robotApi.groupAt(apikey, myAccount, roomid, wxid, content)
           console.log(rs, '创建账号成功')
         }

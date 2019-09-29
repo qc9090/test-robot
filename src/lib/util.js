@@ -30,14 +30,14 @@ export function formatNum (num, len) {
 }
 
 export function didToHex(did) {
-  const bytes = bs58.decode(did.substring(9))
+  const bytes = bs58.decode(did.substring(8))
   return u8aToHex(bytes)
 }
 
 export function hexToDid(hex) {
   const bytes = Buffer.from(hex.slice(2), 'hex')
   const address = bs58.encode(bytes)
-  const did = `did:pra:p${address}`
+  const did = `did:pra:${address}`
   
   return did
 }

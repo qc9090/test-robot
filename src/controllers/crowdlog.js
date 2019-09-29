@@ -83,11 +83,17 @@ const createDid = (wxid, ownerid, apikey, myAccount, roomid) => {
           if (method.includes('ExtrinsicFailed')) isSuccessful = false
         })
         
-        // let did = await api.query.did.identity(address)
-        // did = hexToDid(did)
-        // console.log(did, 'did created')
+        // test
+        const content = `@${wxid}恭喜您创建PRA账户成功！`
+        const rs = await robotApi.groupAt(apikey, myAccount, roomid, wxid, content)
+        console.log(rs, '创建账号成功')
+        
         if (isSuccessful) {
-          const content = `恭喜您创建PRA账户成功！该账户已经与你的微信号绑定，您在微信群中获得的收益将直接转入该账户中。您的账户链接：https://prabox.net/请收藏`
+          let did = await api.query.did.identity(address)
+          did = hexToDid(did)
+          console.log(did, 'did created')
+          
+          const content = `@${wxid}恭喜您创建PRA账户成功！您的账户为${did}，该账户已经与你的微信号绑定，您在微信群中获得的收益将直接转入该账户中。您的账户链接：https://prabox.net/请收藏`
           const rs = await robotApi.groupAt(apikey, myAccount, roomid, wxid, content)
           console.log(rs, '创建账号成功')
         }

@@ -42,7 +42,7 @@ ApiPromise.create({
   console.error(e, 'create api error')
 })
 
-const createDid = (wxid, ownerid, apikey, myAccount, roomid) => {
+const createDid = (wxid, ownerid, apikey, myAccount, roomid, contactName) => {
   const mnemonicPhrase = mnemonicGenerate()
   const keyring = new Keyring({ type: 'sr25519' })
 
@@ -84,7 +84,7 @@ const createDid = (wxid, ownerid, apikey, myAccount, roomid) => {
         })
         
         // test
-        const content = `@${wxid}恭喜您创建PRA账户成功！`
+        const content = `@${contactName} 恭喜您创建PRA账户成功！`
         const rs = await robotApi.groupAt(apikey, myAccount, roomid, wxid, content)
         console.log(rs, '创建账号成功')
         
@@ -306,7 +306,7 @@ export default async (req, res) => {
   }
 
   if (msg.content.trim() === '创建账号') {
-    createDid(id, roomOwner[roomid], apikey, myAccount, roomid)
+    createDid(id, roomOwner[roomid], apikey, myAccount, roomid, contactName)
   }
 
   res.json({})

@@ -7,6 +7,7 @@ const apiUpdateReward = `${baseUrl}/api/v1/chat/bot/set_question_user_index`
 const apiUpdateReason = `${baseUrl}/api/v1/chat/bot/update_reason`
 const apiGetMintRecord = `${baseUrl}/api/v1/chat/bot/get_user_index_by_roomid`
 const apiGetQuestion = `${baseUrl}/api/v1/chat/bot/question`
+const apiShortDomain = `${baseUrl}/api/v1/read_task/short_url`
 
 export async function getQuestion (roomid) {
   return rp({
@@ -60,3 +61,11 @@ export async function getMintHistory (roomid, taskId) {
   })
 }
 
+export async function generateShortDomain (url) {
+  const longUrl = encodeURIComponent(url)
+  return rp({
+    method: 'GET',
+    url: `${apiShortDomain}?url=${longUrl}`,
+    json: true
+  })
+}

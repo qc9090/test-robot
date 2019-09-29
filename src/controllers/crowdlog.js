@@ -17,6 +17,9 @@ let roomEassy = {}
 let roomSession = {}
 let roomOwner = {}
 
+const APPID = 'wx48f51627bef8bcdf'
+const REDIRECT_URI = 'https://chain.pro/wechat-task'
+
 const WS_PROVIDER = 'wss://substrate.chain.pro/ws'
 const provider = new WsProvider(WS_PROVIDER)
 let api
@@ -88,7 +91,11 @@ const createDid = (wxid, ownerid, apikey, myAccount, roomid, contactName) => {
           did = hexToDid(did)
           console.log(did, 'did created')
           
-          const content = `@${contactName} 恭喜您创建PRA账户成功！您的账户为${did}，该账户已经与你的微信号绑定，您在微信群中获得的收益将直接转入该账户中。您的账户链接：https://prabox.net/请收藏`
+          const redirectUri = encodeURIComponent(`${REDIRECT_URI}/#/my-reward`)
+          const url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`
+          const { data: { result } } = await external.generateShortDomain(url)
+
+          const content = `@${contactName} 恭喜您创建PRA账户成功！您的账户为${did}，该账户已经与你的微信号绑定，您在微信群中获得的收益将直接转入该账户中。您的账户链接：${result}请收藏`
           const rs = await robotApi.groupAt(apikey, myAccount, roomid, wxid, content)
           console.log(rs, '创建账号成功')
         }
@@ -296,6 +303,17 @@ export default async (req, res) => {
       const { data: { report } } = await external.getMintHistory(roomid, curEassy.task_id)
       const url = `https://prabox.net/wechat-task/#/qa?roomid=${roomid}&taskid=${curEassy.task_id}`
       const rs = await robotApi.sendUrl(apikey, myAccount, roomid, url, report.room_index, report.ranking)
+      console.log(rs, '挖矿')
+    }
+  }
+
+  if (msg.content.trim() === 'tttt') {
+    if (apikey) {
+      const redirectUri = encodeURIComponent(`${REDIRECT_URI}/#/my-reward`)
+      const url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`
+      const { data: { result } } = await external.generateShortDomain(url)
+      
+      const rs = await robotApi.sendUrl(apikey, myAccount, roomid, result, 0, 0)
       console.log(rs, '挖矿')
     }
   }

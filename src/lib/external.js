@@ -8,7 +8,7 @@ const apiUpdateReason = `${baseUrl}/api/v1/chat/bot/update_reason`
 const apiGetMintRecord = `${baseUrl}/api/v1/chat/bot/get_user_index_by_roomid`
 const apiGetQuestion = `${baseUrl}/api/v1/chat/bot/question`
 const apiShortDomain = `${baseUrl}/api/v1/read_task/short_url`
-const apiChainBind = `${baseUrl}/api/v1/mainnet/bind_sn`
+const apiChainBind = `${baseUrl}/api/v1/mainnet/bind`
 
 export async function getQuestion (roomid) {
   return rp({

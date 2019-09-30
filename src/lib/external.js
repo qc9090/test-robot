@@ -8,6 +8,7 @@ const apiUpdateReason = `${baseUrl}/api/v1/chat/bot/update_reason`
 const apiGetMintRecord = `${baseUrl}/api/v1/chat/bot/get_user_index_by_roomid`
 const apiGetQuestion = `${baseUrl}/api/v1/chat/bot/question`
 const apiShortDomain = `${baseUrl}/api/v1/read_task/short_url`
+const apiChainBind = `${baseUrl}/api/v1/mainnet/bind_sn`
 
 export async function getQuestion (roomid) {
   return rp({
@@ -66,6 +67,18 @@ export async function generateShortDomain (url) {
   return rp({
     method: 'GET',
     url: `${apiShortDomain}?url=${longUrl}`,
+    json: true
+  })
+}
+
+export async function chainBindSn (sn, wxid) {
+  return rp({
+    method: 'POST',
+    url: apiChainBind,
+    body: {
+      sn,
+      wxid
+    },
     json: true
   })
 }

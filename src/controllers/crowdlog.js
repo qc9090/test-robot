@@ -311,9 +311,8 @@ export default async (req, res) => {
     if (apikey) {
       const redirectUri = encodeURIComponent(`${REDIRECT_URI}/#/my-reward`)
       const url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`
-      const data = await external.generateShortDomain(url)
+      // const data = await external.generateShortDomain(url)
       
-      console.log(data)
       const rs = await robotApi.sendUrl(apikey, myAccount, roomid, url, 0, 0)
       console.log(rs, '挖矿')
     }
@@ -321,6 +320,11 @@ export default async (req, res) => {
 
   if (msg.content.trim() === '创建账号') {
     createDid(id, roomOwner[roomid], apikey, myAccount, roomid, contactName)
+  }
+
+  if (/^\d{6}$/.test(msg.content.trim())) {
+    const data = await external.chainBindSn(msg.content.trim(), id)
+    console.log(data, 'bind sn code result')
   }
 
   res.json({})

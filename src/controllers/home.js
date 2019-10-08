@@ -22,8 +22,8 @@ export default async (req, res) => {
       // console.log(trs, '朋友圈')
 
       // group info
-      // const grs = await robotApi.getGroupMember(apikey, 'pratest1111', '4655882583@chatroom')
-      // console.log(grs, '朋友列表')
+      const grs = await robotApi.getGroupMember(apikey, 'pratest1111', '4655882583@chatroom')
+      console.log(grs, '朋友列表')
 
       res.json({ version, rss });
     }

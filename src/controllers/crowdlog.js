@@ -87,9 +87,9 @@ const createDid = (wxid, ownerid, apikey, myAccount, roomid, contactName) => {
         })
         
         if (isSuccessful) {
-          let did = await api.query.did.identity(address)
-          did = hexToDid(did)
-          console.log(did, 'did created')
+          // let did = await api.query.did.identity(address)
+          // did = hexToDid(did)
+          // console.log(did, 'did created')
           
           const redirectUri = encodeURIComponent(`${REDIRECT_URI}/#/my-reward`)
           const url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`

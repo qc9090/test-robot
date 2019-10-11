@@ -42,30 +42,30 @@ socket.on('connect', () => {
   })
 })
 
-const WS_PROVIDER = 'wss://substrate.chain.pro/ws'
-const provider = new WsProvider(WS_PROVIDER)
-let api
-ApiPromise.create({
-  provider,
-  types: {
-    'MetadataRecord': {
-      'address': 'AccountId',
-      'superior': 'Hash',
-      'creator': 'AccountId',
-      'did_type': 'Vec<u8>',
-      'max_rewards': 'Option<Balance>',
-      'locked_funds': 'Option<Balance>',
-      'locked_time': 'Option<Moment>',
-      'locked_period': 'Option<Moment>',
-      'social_account': 'Option<Hash>'
-    }
-  }
-}).then(res => {
-  api = res
-  console.log('api created')
-}).catch(e => {
-  console.error(e, 'create api error')
-})
+// const WS_PROVIDER = 'wss://substrate.chain.pro/ws'
+// const provider = new WsProvider(WS_PROVIDER)
+// let api
+// ApiPromise.create({
+//   provider,
+//   types: {
+//     'MetadataRecord': {
+//       'address': 'AccountId',
+//       'superior': 'Hash',
+//       'creator': 'AccountId',
+//       'did_type': 'Vec<u8>',
+//       'max_rewards': 'Option<Balance>',
+//       'locked_funds': 'Option<Balance>',
+//       'locked_time': 'Option<Moment>',
+//       'locked_period': 'Option<Moment>',
+//       'social_account': 'Option<Hash>'
+//     }
+//   }
+// }).then(res => {
+//   api = res
+//   console.log('api created')
+// }).catch(e => {
+//   console.error(e, 'create api error')
+// })
 
 // const createDid = (wxid, ownerid, apikey, myAccount, roomid, contactName) => {
 //   const mnemonicPhrase = mnemonicGenerate()

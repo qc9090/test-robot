@@ -1,24 +1,46 @@
-import fs from 'fs'
-import path from 'path'
-import { mnemonicGenerate } from '@polkadot/util-crypto'
-import Keyring from '@polkadot/keyring'
-import testKeyring from '@polkadot/keyring/testing'
-import { ApiPromise, WsProvider } from '@polkadot/api'
-import { u8aToHex, stringToHex } from '@polkadot/util'
+// import fs from 'fs'
+// import path from 'path'
+import socketio from 'socket.io-client'
+// import { mnemonicGenerate } from '@polkadot/util-crypto'
+// import Keyring from '@polkadot/keyring'
+// import testKeyring from '@polkadot/keyring/testing'
+// import { ApiPromise, WsProvider } from '@polkadot/api'
+// import { u8aToHex, stringToHex } from '@polkadot/util'
 
 import Reward from '../models/reward'
 import Repeat from '../models/repeat'
 import Team from '../models/team'
-import { formatNum, hexToDid } from '../lib/util'
+import { formatNum } from '../lib/util'
 import * as external from '../lib/external'
 import * as robotApi from '../lib/robot'
+
+const APPID = 'wx48f51627bef8bcdf'
+const REDIRECT_URI = 'https://chain.pro/wechat-task'
 
 let roomEassy = {}
 let roomSession = {}
 let roomOwner = {}
+let curInfo = {}
 
-const APPID = 'wx48f51627bef8bcdf'
-const REDIRECT_URI = 'https://chain.pro/wechat-task'
+const socket = socketio('http://123.207.140.69:8091/')
+socket.on('connect', () => {
+  console.log('connect successfully')
+
+  socket.on('succeed', async msg => {
+    console.log(msg, 'succeed message')
+    
+    const redirectUri = encodeURIComponent(`${REDIRECT_URI}/#/my-reward`)
+    const url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`
+
+    const content = `@${curInfo.contactName} 恭喜您创建PRA账户成功！该账户已经与你的微信号绑定，您在微信群中获得的收益将直接转入该账户中。您的账户链接：${url}请收藏`
+    const rs = await robotApi.groupAt(curInfo.apikey, curInfo.myAccount, curInfo.roomid, curInfo.wxid, content)
+    console.log(rs, '创建账号成功')
+  })
+
+  socket.on('failed', msg => {
+    console.log(msg, 'failed msg')
+  })
+})
 
 const WS_PROVIDER = 'wss://substrate.chain.pro/ws'
 const provider = new WsProvider(WS_PROVIDER)
@@ -45,77 +67,77 @@ ApiPromise.create({
   console.error(e, 'create api error')
 })
 
-const createDid = (wxid, ownerid, apikey, myAccount, roomid, contactName) => {
-  const mnemonicPhrase = mnemonicGenerate()
-  const keyring = new Keyring({ type: 'sr25519' })
+// const createDid = (wxid, ownerid, apikey, myAccount, roomid, contactName) => {
+//   const mnemonicPhrase = mnemonicGenerate()
+//   const keyring = new Keyring({ type: 'sr25519' })
 
-  keyring.addFromMnemonic(mnemonicPhrase)
-  console.log(`Generated mnemonic: ${mnemonicPhrase}`)
+//   keyring.addFromMnemonic(mnemonicPhrase)
+//   console.log(`Generated mnemonic: ${mnemonicPhrase}`)
 
-  keyring
-  .getPairs()
-  .forEach(async (pair, index) => {
-    const tkeyring = testKeyring()
-    const { address, publicKey } = pair
-    const pairKeystore = JSON.stringify(keyring.toJson(address, 'test123456'), null, 2)
-    const pairSeed = JSON.stringify({ address, seed: mnemonicPhrase })
-    console.log(address, 'new address')
+//   keyring
+//   .getPairs()
+//   .forEach(async (pair, index) => {
+//     const tkeyring = testKeyring()
+//     const { address, publicKey } = pair
+//     const pairKeystore = JSON.stringify(keyring.toJson(address, 'test123456'), null, 2)
+//     const pairSeed = JSON.stringify({ address, seed: mnemonicPhrase })
+//     console.log(address, 'new address')
 
-    const ALICE = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
-    const nonce = await api.query.system.accountNonce(ALICE)
-    const alicePair = tkeyring.getPair(ALICE)
+//     const ALICE = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
+//     const nonce = await api.query.system.accountNonce(ALICE)
+//     const alicePair = tkeyring.getPair(ALICE)
 
-    const pubkey = u8aToHex(publicKey)
+//     const pubkey = u8aToHex(publicKey)
 
-    const social_account = stringToHex(wxid)
-    const social_superior = stringToHex(ownerid)
-    const did_type = stringToHex('wechat')
+//     const social_account = stringToHex(wxid)
+//     const social_superior = stringToHex(ownerid)
+//     const did_type = stringToHex('wechat')
 
-    console.log(wxid, ownerid, contactName, 'ownerid------')
-    api.tx.did.create(pubkey, address, did_type, '', social_account, social_superior)
-    .signAndSend(alicePair, { nonce }, async ({ events = [], status }) => {
-      console.log('Transaction status:', status.type)
+//     console.log(wxid, ownerid, contactName, 'ownerid------')
+//     api.tx.did.create(pubkey, address, did_type, '', social_account, social_superior)
+//     .signAndSend(alicePair, { nonce }, async ({ events = [], status }) => {
+//       console.log('Transaction status:', status.type)
 
-      if (status.isFinalized) {
-        console.log('Completed at block hash', status.asFinalized.toHex())
-        console.log('Events:')
+//       if (status.isFinalized) {
+//         console.log('Completed at block hash', status.asFinalized.toHex())
+//         console.log('Events:')
         
-        let isSuccessful = true
-        events.forEach(({ phase, event: { data, method, section } }) => {
-          console.log('\t', phase.toString(), `: ${section}.${method}`, data.toString())
-          if (method.includes('ExtrinsicFailed')) isSuccessful = false
-        })
+//         let isSuccessful = true
+//         events.forEach(({ phase, event: { data, method, section } }) => {
+//           console.log('\t', phase.toString(), `: ${section}.${method}`, data.toString())
+//           if (method.includes('ExtrinsicFailed')) isSuccessful = false
+//         })
         
-        if (isSuccessful) {
-          // let did = await api.query.did.identity(address)
-          // did = hexToDid(did)
-          // console.log(did, 'did created')
+//         if (isSuccessful) {
+//           // let did = await api.query.did.identity(address)
+//           // did = hexToDid(did)
+//           // console.log(did, 'did created')
           
-          const redirectUri = encodeURIComponent(`${REDIRECT_URI}/#/my-reward`)
-          const url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`
-          // const { data: { result } } = await external.generateShortDomain(url)
+//           const redirectUri = encodeURIComponent(`${REDIRECT_URI}/#/my-reward`)
+//           const url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`
+//           // const { data: { result } } = await external.generateShortDomain(url)
 
-          const content = `@${contactName} 恭喜您创建PRA账户成功！该账户已经与你的微信号绑定，您在微信群中获得的收益将直接转入该账户中。您的账户链接：${url}请收藏`
-          const rs = await robotApi.groupAt(apikey, myAccount, roomid, wxid, content)
-          console.log(rs, '创建账号成功')
-        }
-      }
-    })
+//           const content = `@${contactName} 恭喜您创建PRA账户成功！该账户已经与你的微信号绑定，您在微信群中获得的收益将直接转入该账户中。您的账户链接：${url}请收藏`
+//           const rs = await robotApi.groupAt(apikey, myAccount, roomid, wxid, content)
+//           console.log(rs, '创建账号成功')
+//         }
+//       }
+//     })
 
-    const basePath = path.join(process.cwd(), './static')
-    console.log(basePath, 'bath path')
-    fs.writeFile(`${basePath}/key_stores/${address}.json`, pairKeystore, err => {
-      if(err) return console.log(err)
-      console.log('create key pair successfully')
-    })
+//     const basePath = path.join(process.cwd(), './static')
+//     console.log(basePath, 'bath path')
+//     fs.writeFile(`${basePath}/key_stores/${address}.json`, pairKeystore, err => {
+//       if(err) return console.log(err)
+//       console.log('create key pair successfully')
+//     })
 
-    fs.writeFile(`${basePath}/keys/${address}.json`, pairSeed, err => {
-      if(err) return console.log(err)
-      console.log('save pair seed successfully')
-    })
+//     fs.writeFile(`${basePath}/keys/${address}.json`, pairSeed, err => {
+//       if(err) return console.log(err)
+//       console.log('save pair seed successfully')
+//     })
     
-  })
-}
+//   })
+// }
 
 export default async (req, res) => {
   console.log('crowd log', req.body)
@@ -319,7 +341,22 @@ export default async (req, res) => {
   }
 
   if (msg.content.trim() === '创建账号') {
-    createDid(id, roomOwner[roomid], apikey, myAccount, roomid, contactName)
+    // createDid(id, roomOwner[roomid], apikey, myAccount, roomid, contactName)
+    const data = JSON.stringify({
+      type: 'wechat',
+      sid: id,
+      socialSuperior: roomOwner[roomid],
+    })
+
+    curInfo = {
+      wxid: id,
+      apikey,
+      myAccount,
+      roomid,
+      contactName
+    }
+
+    socket.emit('create_by_sns', data)
   }
 
   if (/^\d{6}$/.test(msg.content.trim())) {

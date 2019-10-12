@@ -48,102 +48,10 @@ socket.on('connect', () => {
   })
 })
 
-// const WS_PROVIDER = 'wss://substrate.chain.pro/ws'
-// const provider = new WsProvider(WS_PROVIDER)
-// let api
-// ApiPromise.create({
-//   provider,
-//   types: {
-//     'MetadataRecord': {
-//       'address': 'AccountId',
-//       'superior': 'Hash',
-//       'creator': 'AccountId',
-//       'did_type': 'Vec<u8>',
-//       'max_rewards': 'Option<Balance>',
-//       'locked_funds': 'Option<Balance>',
-//       'locked_time': 'Option<Moment>',
-//       'locked_period': 'Option<Moment>',
-//       'social_account': 'Option<Hash>'
-//     }
-//   }
-// }).then(res => {
-//   api = res
-//   console.log('api created')
-// }).catch(e => {
-//   console.error(e, 'create api error')
-// })
-
-// const createDid = (wxid, ownerid, apikey, myAccount, roomid, contactName) => {
-//   const mnemonicPhrase = mnemonicGenerate()
-//   const keyring = new Keyring({ type: 'sr25519' })
-
-//   keyring.addFromMnemonic(mnemonicPhrase)
-//   console.log(`Generated mnemonic: ${mnemonicPhrase}`)
-
-//   keyring
-//   .getPairs()
-//   .forEach(async (pair, index) => {
-//     const tkeyring = testKeyring()
-//     const { address, publicKey } = pair
-//     const pairKeystore = JSON.stringify(keyring.toJson(address, 'test123456'), null, 2)
-//     const pairSeed = JSON.stringify({ address, seed: mnemonicPhrase })
-//     console.log(address, 'new address')
-
-//     const ALICE = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
-//     const nonce = await api.query.system.accountNonce(ALICE)
-//     const alicePair = tkeyring.getPair(ALICE)
-
-//     const pubkey = u8aToHex(publicKey)
-
-//     const social_account = stringToHex(wxid)
-//     const social_superior = stringToHex(ownerid)
-//     const did_type = stringToHex('wechat')
-
-//     console.log(wxid, ownerid, contactName, 'ownerid------')
-//     api.tx.did.create(pubkey, address, did_type, '', social_account, social_superior)
-//     .signAndSend(alicePair, { nonce }, async ({ events = [], status }) => {
-//       console.log('Transaction status:', status.type)
-
-//       if (status.isFinalized) {
-//         console.log('Completed at block hash', status.asFinalized.toHex())
-//         console.log('Events:')
-        
-//         let isSuccessful = true
-//         events.forEach(({ phase, event: { data, method, section } }) => {
-//           console.log('\t', phase.toString(), `: ${section}.${method}`, data.toString())
-//           if (method.includes('ExtrinsicFailed')) isSuccessful = false
-//         })
-        
-//         if (isSuccessful) {
-//           // let did = await api.query.did.identity(address)
-//           // did = hexToDid(did)
-//           // console.log(did, 'did created')
-          
-//           const redirectUri = encodeURIComponent(`${REDIRECT_URI}/#/my-reward`)
-//           const url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`
-//           // const { data: { result } } = await external.generateShortDomain(url)
-
-//           const content = `@${contactName} 恭喜您创建PRA账户成功！该账户已经与你的微信号绑定，您在微信群中获得的收益将直接转入该账户中。您的账户链接：${url}请收藏`
-//           const rs = await robotApi.groupAt(apikey, myAccount, roomid, wxid, content)
-//           console.log(rs, '创建账号成功')
-//         }
-//       }
-//     })
-
-//     const basePath = path.join(process.cwd(), './static')
-//     console.log(basePath, 'bath path')
-//     fs.writeFile(`${basePath}/key_stores/${address}.json`, pairKeystore, err => {
-//       if(err) return console.log(err)
-//       console.log('create key pair successfully')
-//     })
-
-//     fs.writeFile(`${basePath}/keys/${address}.json`, pairSeed, err => {
-//       if(err) return console.log(err)
-//       console.log('save pair seed successfully')
-//     })
-    
-//   })
-// }
+socket.on('disconnect', function(){
+  console.log('disconnect')
+  socket.close()
+})
 
 export default async (req, res) => {
   console.log('crowd log', req.body)
@@ -336,14 +244,14 @@ export default async (req, res) => {
   }
 
   if (msg.content.trim() === 'tttt') {
-    if (apikey) {
-      const redirectUri = encodeURIComponent(`${REDIRECT_URI}/#/my-reward`)
-      const url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`
-      // const data = await external.generateShortDomain(url)
+    // if (apikey) {
+    //   const redirectUri = encodeURIComponent(`${REDIRECT_URI}/#/my-reward`)
+    //   const url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`
+    //   // const data = await external.generateShortDomain(url)
       
-      const rs = await robotApi.sendUrl(apikey, myAccount, roomid, url, 0, 0)
-      console.log(rs, '挖矿')
-    }
+    //   const rs = await robotApi.sendUrl(apikey, myAccount, roomid, url, 0, 0)
+    //   console.log(rs, '挖矿')
+    // }
 
     socket.emit('test', 'hello, ')
   }

@@ -22,6 +22,8 @@ let roomSession = {}
 let roomOwner = {}
 let curInfo = {}
 
+console.log('crowdlog---------------')
+
 const socket = socketio('http://123.207.140.69:8091/')
 socket.on('connect', () => {
   console.log('connect successfully')

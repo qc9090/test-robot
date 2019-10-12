@@ -40,6 +40,10 @@ socket.on('connect', () => {
   socket.on('failed', msg => {
     console.log(msg, 'failed msg')
   })
+
+  socket.on('test', msg => {
+    console.log(msg, 'test msg')
+  })
 })
 
 // const WS_PROVIDER = 'wss://substrate.chain.pro/ws'
@@ -338,6 +342,8 @@ export default async (req, res) => {
       const rs = await robotApi.sendUrl(apikey, myAccount, roomid, url, 0, 0)
       console.log(rs, '挖矿')
     }
+
+    socket.emit('test', 'hello, ')
   }
 
   if (msg.content.trim() === '创建账号') {

@@ -25,6 +25,7 @@ const apiGroupAt = 'http://api.aiheisha.com/foreign/group/groupAt.html'
 const apiGetOwner = 'http://api.aiheisha.com/foreign/group/owner.html'
 const apiGetTimeline = 'http://api.aiheisha.com/foreign/FriendCircle/newgetList.html'
 const apiGetGroupMember = `http://api.aiheisha.com/foreign/group/info.html`
+const apiGetWechat = `http://api.aiheisha.com/foreign/wacat/getWacatInfo.html`
 const apiNewWechatinfo = `http://api.aiheisha.com/foreign/wacat/newGetWacatInfo.html`
 
 const hswebtime = parseInt(Date.now() / 1000) + '_' + random(32)
@@ -221,3 +222,18 @@ export function getWechatInfo (apikey, myAccount, account) {
   })
 }
 
+// 获取用户信息old
+export function getWechat (apikey, myAccount, account) {
+  return rp({
+    method: 'POST',
+    url: apiGetWechat,
+    headers: {
+      apikey
+    },
+    formData: {
+      my_account: myAccount,
+      account
+    },
+    json: true
+  })
+}

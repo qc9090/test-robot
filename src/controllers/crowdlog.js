@@ -276,9 +276,9 @@ export default async (req, res) => {
   }
 
   if (/^\d{6}$/.test(msg.content.trim())) {
-    const { data } = await robotApi.getWechat(apikey, myAccount, id)
-    console.log(data, 'user info')
-    const data = await external.chainBindSn(msg.content.trim(), id, data.thumb)
+    const { data: userInfo } = await robotApi.getWechat(apikey, myAccount, id)
+    console.log(userInfo, 'user info')
+    const data = await external.chainBindSn(msg.content.trim(), id, userInfo.thumb)
     console.log(data, 'bind sn code result')
   }
 

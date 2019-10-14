@@ -47,5 +47,9 @@ export default ({ config, db }) => {
 		console.log('timeline', JSON.stringify(req.body))
 	})
 
+	api.post('/general', multipartMiddleware, (req) => {
+		console.log('general message', JSON.stringify(req.body))
+	})
+
 	return api;
 }

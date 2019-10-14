@@ -16,6 +16,7 @@ const CROWD_LOG = `${baseUrl}/api/crowdlog`
 const ADD_FRIEND_LOG = `${baseUrl}/api/addfriendlog`
 const WACAT_OUT = `${baseUrl}/api/wacatout`
 const ADD_GROUP_LOG = `${baseUrl}/api/addgrouplog`
+const CALLBACK_SEND =  `${baseUrl}/api/general`
 
 /* wechat handler api*/
 const apiSendUrl = 'http://api.aiheisha.com/foreign/message/sendUrl.html'
@@ -88,7 +89,8 @@ export function setUrl (apikey) {
       crowdlog: CROWD_LOG,
       addfriendlog: ADD_FRIEND_LOG,
       wecatout: WACAT_OUT,
-      addgrouplog: ADD_GROUP_LOG
+      addgrouplog: ADD_GROUP_LOG,
+      callbackSend: CALLBACK_SEND
     },
     json: true
   })

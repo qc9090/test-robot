@@ -1,12 +1,4 @@
-// import fs from 'fs'
-// import path from 'path'
 import socketio from 'socket.io-client'
-// import { mnemonicGenerate } from '@polkadot/util-crypto'
-// import Keyring from '@polkadot/keyring'
-// import testKeyring from '@polkadot/keyring/testing'
-// import { ApiPromise, WsProvider } from '@polkadot/api'
-// import { u8aToHex, stringToHex } from '@polkadot/util'
-
 import Reward from '../models/reward'
 import Repeat from '../models/repeat'
 import Team from '../models/team'
@@ -20,7 +12,7 @@ const REDIRECT_URI = 'https://chain.pro/wechat-task'
 let roomEassy = {}
 let roomSession = {}
 let roomOwner = {}
-let curInfo = {}
+let creationInfo = {}
 
 console.log('crowdlog---------------')
 
@@ -28,24 +20,32 @@ const socket = socketio('http://123.207.140.69:8091/')
 socket.on('connect', () => {
   console.log('connect successfully')
 
-  socket.on('succeed', async msg => {
-    console.log(msg, 'succeed message')
+  socket.on('succeed', async message => {
+    const { origin, msg, extend } = JSON.parse(message)
+    console.log(msg, 'succeed events')
+    if (origin == 'sns') {
+      const { sid, exists } = extend
+      if (!exists) {
+        const { apikey, myAccount, roomid, wxid, contactName, code } = creationInfo[sid]
+        const redirectUri = encodeURIComponent(`${REDIRECT_URI}/#/my-reward`)
+        const url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`
     
-    const redirectUri = encodeURIComponent(`${REDIRECT_URI}/#/my-reward`)
-    const url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`
+        const content = `@${contactName} 恭喜您创建PRA账户成功！该账户已经与你的微信号绑定，您在微信群中获得的收益将直接转入该账户中。您的账户链接：${url}请收藏`
+        const rs = await robotApi.groupAt(apikey, myAccount, roomid, wxid, content)
+        console.log(rs, '创建账号成功')
+      }
 
-    const content = `@${curInfo.contactName} 恭喜您创建PRA账户成功！该账户已经与你的微信号绑定，您在微信群中获得的收益将直接转入该账户中。您的账户链接：${url}请收藏`
-    const rs = await robotApi.groupAt(curInfo.apikey, curInfo.myAccount, curInfo.roomid, curInfo.wxid, content)
-    console.log(rs, '创建账号成功')
+      const { data: userInfo } = await robotApi.getWechat(apikey, myAccount, wxid)
+      console.log(userInfo, 'user info')
+      const data = await external.chainBindSn(code, wxid, userInfo.thumb)
+      console.log(data, 'bind sn code result')
+    }
   })
 
   socket.on('failed', msg => {
     console.log(msg, 'failed msg')
   })
 
-  socket.on('test', msg => {
-    console.log(msg, 'test msg')
-  })
 })
 
 socket.on('disconnect', function(){
@@ -243,43 +243,56 @@ export default async (req, res) => {
     }
   }
 
-  if (msg.content.trim() === 'tttt') {
-    // if (apikey) {
-    //   const redirectUri = encodeURIComponent(`${REDIRECT_URI}/#/my-reward`)
-    //   const url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`
-    //   // const data = await external.generateShortDomain(url)
+  if (msg.content.trim() === '钱包') {
+    if (apikey) {
+      const redirectUri = encodeURIComponent(`${REDIRECT_URI}/#/my-reward`)
+      const url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`
       
-    //   const rs = await robotApi.sendUrl(apikey, myAccount, roomid, url, 0, 0)
-    //   console.log(rs, '挖矿')
-    // }
-
-    socket.emit('test', 'hello, ')
+      const rs = await robotApi.sendUrl(apikey, myAccount, roomid, url, 0, 0)
+      console.log(rs, '钱包')
+    }
   }
 
   if (msg.content.trim() === '创建账号') {
-    // createDid(id, roomOwner[roomid], apikey, myAccount, roomid, contactName)
+    // const data = JSON.stringify({
+    //   type: 'wechat',
+    //   sid: id,
+    //   socialSuperior: roomOwner[roomid],
+    // })
+
+    // creationInfo[id] = {
+    //   wxid: id,
+    //   apikey,
+    //   myAccount,
+    //   roomid,
+    //   contactName
+    // }
+
+    // socket.emit('create_by_sns', data)
+  }
+
+  if (/^\d{6}$/.test(msg.content.trim())) {
     const data = JSON.stringify({
       type: 'wechat',
       sid: id,
       socialSuperior: roomOwner[roomid],
     })
 
-    curInfo = {
+    creationInfo[id] = {
       wxid: id,
       apikey,
       myAccount,
       roomid,
-      contactName
+      contactName,
+      code: msg.content.trim()
     }
 
     socket.emit('create_by_sns', data)
-  }
-
-  if (/^\d{6}$/.test(msg.content.trim())) {
-    const { data: userInfo } = await robotApi.getWechat(apikey, myAccount, id)
-    console.log(userInfo, 'user info')
-    const data = await external.chainBindSn(msg.content.trim(), id, userInfo.thumb)
-    console.log(data, 'bind sn code result')
+    
+    // const { data: userInfo } = await robotApi.getWechat(apikey, myAccount, id)
+    // console.log(userInfo, 'user info')
+    // const data = await external.chainBindSn(msg.content.trim(), id, userInfo.thumb)
+    // console.log(data, 'bind sn code result')
   }
 
   res.json({})

@@ -25,8 +25,8 @@ socket.on('connect', () => {
     console.log(msg, 'succeed events')
     if (origin == 'sns') {
       const { sid, exists } = extend
+      const { apikey, myAccount, roomid, wxid, contactName, code } = creationInfo[sid]
       if (!exists) {
-        const { apikey, myAccount, roomid, wxid, contactName, code } = creationInfo[sid]
         const redirectUri = encodeURIComponent(`${REDIRECT_URI}/#/my-reward`)
         const url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`
     

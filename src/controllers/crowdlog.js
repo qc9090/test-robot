@@ -30,7 +30,9 @@ socket.on('connect', () => {
         // const redirectUri = encodeURIComponent(`${REDIRECT_URI}/#/my-reward`)
         // const url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`
     
-        const content = `@${contactName} 恭喜您创建PRA账户成功！PRA账户基于DID理念，使您的微信账号与PRA账号绑定，方便您在微信中立即获得PRA广告收益！回复“钱包”即可获得您的钱包管理入口`
+        const content = `@${contactName} 恭喜您创建PRA账户成功！
+        PRA账户基于DID理念，使您的微信账号与PRA账号绑定，方便您在微信中立即获得PRA广告收益！
+        回复“钱包”即可获得您的钱包管理入口`
         const rs = await robotApi.groupAt(apikey, myAccount, roomid, wxid, content)
         console.log(rs, '创建账号成功')
       }

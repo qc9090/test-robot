@@ -134,7 +134,7 @@ export function groupAt (apikey, myAccount, account, atUser, content) {
 }
 
 // 发送卡片链接
-export function sendUrl (apikey, myAccount, toAccount, url, roomIndex, rank) {
+export function sendUrl (apikey, myAccount, toAccount, url, roomIndex, rank, title, describe) {
   return rp({
     method: 'POST',
     url: apiSendUrl,
@@ -145,8 +145,8 @@ export function sendUrl (apikey, myAccount, toAccount, url, roomIndex, rank) {
       my_account: myAccount,
       to_account: toAccount,
       url,
-      title: `本群当前挖矿指数已累计${roomIndex}，排名第${rank}！`,
-      describe: '在群内回答问题即可获得挖矿指数',
+      title,
+      describe,
       type: 2,
       thumb: 'https://static.chain.pro/chain/praad.gif'
     },

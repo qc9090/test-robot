@@ -22,7 +22,7 @@ socket.on('connect', () => {
 
   socket.on('succeed', async message => {
     const { origin, msg, extend } = JSON.parse(message)
-    console.log(msg, 'succeed events')
+    console.log(message, 'succeed message')
     if (origin == 'sns') {
       const { sid, exists } = extend
       const { apikey, myAccount, roomid, wxid, contactName, code } = creationInfo[sid]
@@ -238,7 +238,9 @@ export default async (req, res) => {
     if (apikey) {
       const { data: { report } } = await external.getMintHistory(roomid, curEassy.task_id)
       const url = `https://prabox.net/wechat-task/#/qa?roomid=${roomid}&taskid=${curEassy.task_id}`
-      const rs = await robotApi.sendUrl(apikey, myAccount, roomid, url, report.room_index, report.ranking)
+      const title = `本群当前挖矿指数已累计${report.room_index}，排名第${report.ranking}！`
+      const describe = '在群内回答问题即可获得挖矿指数'
+      const rs = await robotApi.sendUrl(apikey, myAccount, roomid, url, report.room_index, report.ranking, title, describe)
       console.log(rs, '挖矿')
     }
   }
@@ -248,7 +250,9 @@ export default async (req, res) => {
       const redirectUri = encodeURIComponent(`${REDIRECT_URI}/#/my-reward`)
       const url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`
       
-      const rs = await robotApi.sendUrl(apikey, myAccount, roomid, url, 0, 0)
+      const title = '点击进入您的钱包'
+      const describe = '快速转账、收款、抵押'
+      const rs = await robotApi.sendUrl(apikey, myAccount, roomid, url, 0, 0, title, describe)
       console.log(rs, '钱包')
     }
   }

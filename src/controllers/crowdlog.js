@@ -271,6 +271,7 @@ export default async (req, res) => {
 
   if (msg.content.trim() === '更新头像') {
     const { data } = await robotApi.getWechat(apikey, myAccount, id)
+    console.log(data, 'user data')
     const rs = await external.updateAvatar(id, data.thumb)
     console.log(rs, 'update avatar')
   }

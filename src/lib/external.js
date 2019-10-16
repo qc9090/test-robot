@@ -9,6 +9,7 @@ const apiGetMintRecord = `${baseUrl}/api/v1/chat/bot/get_user_index_by_roomid`
 const apiGetQuestion = `${baseUrl}/api/v1/chat/bot/question`
 const apiShortDomain = `${baseUrl}/api/v1/read_task/short_url`
 const apiChainBind = `${baseUrl}/api/v1/mainnet/bind`
+const apiUpdateAvatar = `${baseUrl}/api/v1/mainnet/update_avatar`
 
 export async function getQuestion (roomid) {
   return rp({
@@ -77,6 +78,18 @@ export async function chainBindSn (sn, wxid, avatar) {
     url: apiChainBind,
     body: {
       sn,
+      wxid,
+      avatar
+    },
+    json: true
+  })
+}
+
+export async function updateAvatar (wxid, avatar) {
+  return rp({
+    method: 'POST',
+    url: apiUpdateAvatar,
+    body: {
       wxid,
       avatar
     },

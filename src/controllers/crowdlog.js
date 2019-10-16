@@ -269,6 +269,12 @@ export default async (req, res) => {
     }
   }
 
+  if (msg.content.trim() === '更新头像') {
+    const { data } = await robotApi.getWechat(apikey, myAccount, id)
+    const rs = await external.updateAvatar(id, data.thumb)
+    console.log(rs, 'update avatar')
+  }
+
   if (msg.content.trim() === '创建账号') {
     // const data = JSON.stringify({
     //   type: 'wechat',

@@ -257,6 +257,18 @@ export default async (req, res) => {
     }
   }
 
+  if (msg.content.trim() === '头像检测') {
+    if (apikey) {
+      const redirectUri = encodeURIComponent(`${REDIRECT_URI}/#/wallet/decode`)
+      const url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect`
+      
+      const title = '点击进入检测您的头像'
+      const describe = '检测头像是否已经关联了区块链账号'
+      const rs = await robotApi.sendUrl(apikey, myAccount, roomid, url, 0, 0, title, describe)
+      console.log(rs, '头像检测')
+    }
+  }
+
   if (msg.content.trim() === '创建账号') {
     // const data = JSON.stringify({
     //   type: 'wechat',

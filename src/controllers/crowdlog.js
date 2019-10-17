@@ -27,7 +27,7 @@ socket.on('connect', () => {
       const { sid, exists } = extend
       const { apikey, myAccount, roomid, wxid, contactName, code } = creationInfo[sid]
       if (!exists) {
-        // const redirectUri = encodeURIComponent(`${REDIRECT_URI}/#/my-reward`)
+        // const redirectUri = encodeURIComponent(`${REDIRECT_URI}/#/wallet`)
         // const url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`
     
         const content = `@${contactName} 恭喜您创建PRA账户成功！\nPRA账户基于DID理念，使您的微信账号与PRA账号绑定，方便您在微信中立即获得PRA广告收益！\n回复“钱包”即可获得您的钱包管理入口`
@@ -247,7 +247,7 @@ export default async (req, res) => {
 
   if (msg.content.trim() === '钱包') {
     if (apikey) {
-      const redirectUri = encodeURIComponent(`${REDIRECT_URI}/#/my-reward`)
+      const redirectUri = encodeURIComponent(`${REDIRECT_URI}/#/wallet`)
       const url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`
       
       const title = '点击进入您的钱包'

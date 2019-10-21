@@ -295,8 +295,9 @@ export default async (req, res) => {
   }
 
   if (/^\d{6}$/.test(msg.content.trim())) {
+    // wechat:1
     const data = JSON.stringify({
-      type: 'wechat',
+      type: '1',
       sid: id,
       socialSuperior: roomOwner[roomid],
     })

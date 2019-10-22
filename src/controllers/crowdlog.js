@@ -38,7 +38,7 @@ socket.on('connect', () => {
       const { data: userInfo } = await robotApi.getWechat(apikey, myAccount, wxid)
       console.log(userInfo, 'user info')
       const thumb = userInfo ? userInfo.thumb : ''
-      const data = await external.chainBindSn(code, wxid, thumb)
+      const data = await external.chainBindSn(code, wxid, thumb, contactName)
       console.log(data, 'bind sn code result')
     }
   })

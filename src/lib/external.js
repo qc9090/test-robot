@@ -72,14 +72,15 @@ export async function generateShortDomain (url) {
   })
 }
 
-export async function chainBindSn (sn, wxid, avatar) {
+export async function chainBindSn (sn, wxid, avatar, nickName) {
   return rp({
     method: 'POST',
     url: apiChainBind,
     body: {
       sn,
       wxid,
-      avatar
+      avatar,
+      nick_name: nickName
     },
     json: true
   })

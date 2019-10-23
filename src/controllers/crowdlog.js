@@ -270,6 +270,18 @@ export default async (req, res) => {
     }
   }
 
+  if (msg.content.trim() === '抽奖') {
+    if (apikey) {
+      const redirectUri = encodeURIComponent(`${REDIRECT_URI}/#/activity/lucky-wheel`)
+      const url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect`
+      
+      const title = '点击进入抽奖'
+      const describe = 'PRA大奖等你来拿'
+      const rs = await robotApi.sendUrl(apikey, myAccount, roomid, url, 0, 0, title, describe)
+      console.log(rs, '抽奖')
+    }
+  }
+
   if (msg.content.trim() === '更新头像') {
     const { data } = await robotApi.getWechat(apikey, myAccount, id)
     console.log(data, 'user data')
